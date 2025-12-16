@@ -12,17 +12,22 @@ struct Profile: Decodable, Identifiable {
     let totalPoints: Int64
     let currentPoints: Int64
     let totalSafeCarbon: Double
+    let createdAt: String
+    let updatedAt: String
 
     enum CodingKeys: String, CodingKey {
         case id
         case name
         case email
-        case isActive = "is_active"
-        case totalPoints = "total_points"
-        case currentPoints = "current_points"
-        case totalSafeCarbon = "total_safe_carbon"
+        case isActive
+        case totalPoints
+        case currentPoints
+        case totalSafeCarbon
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
     }
 }
+
 
 // MARK: - View
 
