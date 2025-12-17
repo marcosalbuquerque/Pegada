@@ -4,55 +4,38 @@
 //
 //  Created by João Felipe Schwaab on 17/12/25.
 //
-
 import Foundation
+import SwiftData
 import Combine
 
+@MainActor
 final class UserViewModel: ObservableObject {
 
-    // MARK: - Published
-    @Published var profile: UserProfileDTO?
+    @Published var profile: ProfileEntity?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
-    // MARK: - Dependencies
+    private let profileStore: ProfileStore
     private let userService: UserService
-    private let userId: String
+    private let userId: UUID
 
-    // MARK: - Init
-    init(
-        userService: UserService,
-        userId: String
-    ) {
-        self.userService = userService
+    init(modelContext: ModelContext, userId: UUID, userService: UserService) {
+        self.profileStore = ProfileStore(context: modelContext)
         self.userId = userId
+        self.userService = userService
     }
 
     // MARK: - Load Profile
     func loadUserProfile() {
-        isLoading = true
-        errorMessage = nil
-
-        userService.fetchUserProfile(userId: userId) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self else { return }
-
-                self.isLoading = false
-
-                switch result {
-                case .success(let profile):
-                    self.profile = profile
-
-                case .failure(let error):
-                    self.errorMessage = error.localizedDescription
-                    print("❌ Erro ao carregar perfil:", error)
-                }
-            }
+        do {
+            self.profile = try profileStore.fetchCurrentProfile()
+        } catch {
+            self.errorMessage = "Erro ao carregar perfil local."
+            print("❌ SwiftData error:", error)
         }
     }
-
-    // MARK: - Update Name
-    func updateUserName(_ newName: String) {
+    
+    func updateUserName(_ newName: String) async {
         guard !newName.trimmingCharacters(in: .whitespaces).isEmpty else {
             errorMessage = "Nome inválido."
             return
@@ -61,24 +44,22 @@ final class UserViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        userService.updateUserName(
-            userId: userId,
-            name: newName
-        ) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self else { return }
+        do {
+            try await userService.updateUserName(
+                userId: userId.uuidString,
+                name: newName
+            )
 
-                self.isLoading = false
+            try profileStore.updateName(userId: userId, name: newName)
 
-                switch result {
-                case .success(let updatedProfile):
-                    self.profile = updatedProfile
+            self.profile = try profileStore.fetchCurrentProfile()
 
-                case .failure(let error):
-                    self.errorMessage = error.localizedDescription
-                    print("❌ Erro ao atualizar nome:", error)
-                }
-            }
+        } catch {
+            self.errorMessage = error.localizedDescription
+            print("❌ Erro ao atualizar nome:", error)
         }
+
+        isLoading = false
     }
+
 }

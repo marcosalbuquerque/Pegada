@@ -7,30 +7,29 @@
 
 import Foundation
 import Combine
-import SwiftUI
+import SwiftData
 
 @MainActor
 final class AppState: ObservableObject {
 
-    @Published var isAuthenticated: Bool = false
-    @Published var profile: Profile? // Assumindo que você tem uma struct Profile definida em outro lugar
-    
-    // Variável que controla se o usuário já viu o onboarding
-    @Published var hasSeenOnboarding: Bool {
-        didSet {
-            UserDefaults.standard.set(hasSeenOnboarding, forKey: "hasSeenOnboarding")
+    @Published var isAuthenticated = false
+    @Published var currentUserId: UUID?
+
+    func restoreSession(profileStore: ProfileStore) {
+        if let profile = try? profileStore.fetchCurrentProfile() {
+            isAuthenticated = true
+            currentUserId = profile.id
+        } else {
+            isAuthenticated = false
+            currentUserId = nil
         }
     }
 
-    init() {
-        // Ao iniciar, lê o valor salvo. Se não existir, retorna false por padrão.
-        self.hasSeenOnboarding = UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
+    func logout(profileStore: ProfileStore) {
+        try? profileStore.deleteAll()
+        isAuthenticated = false
+        currentUserId = nil
     }
-    
-    func completeOnboarding() {
-        withAnimation {
-            hasSeenOnboarding = true
-        }
-    }
-    @Published var currentUserId: UUID?
 }
+
+
