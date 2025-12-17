@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CardTotalPoints: View {
-    var profile: Profile
+    var profile: ProfileEntity
     var body: some View {
         HStack {
             VStack(alignment: .leading) {

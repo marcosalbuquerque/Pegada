@@ -6,10 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ShopView: View {
     let currentUserId: UUID
-    @StateObject private var viewModel = ShopViewModel()
+
+    @StateObject var viewModel : ShopViewModel
+    
+    init(currentUserId: UUID, modelContext: ModelContext, userService : UserService) {
+        self.currentUserId = currentUserId
+        _viewModel = StateObject(wrappedValue: ShopViewModel(
+            userId: currentUserId,
+            modelContext: modelContext,
+            userService: userService
+        ))
+    }
+    
 
     var body: some View {
         NavigationStack {

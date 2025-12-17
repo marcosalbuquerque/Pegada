@@ -82,37 +82,27 @@ final class UserService {
     // MARK: - Atualizar Nome
     func updateUserName(
         userId: String,
-        name: String,
-        completion: @escaping (Result<UserProfileDTO, Error>) -> Void
-    ) {
+        name: String
+    ) async throws {
         var request = URLRequest(url: updateNameURL(userId: userId))
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let body = ["name": name]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-
-            guard let data else {
-                completion(.failure(ServiceError.noData))
-                return
-            }
-
-            do {
-                let user = try JSONDecoder().decode(UserProfileDTO.self, from: data)
-                completion(.success(user))
-            } catch {
-                completion(.failure(error))
-            }
+        guard let httpResponse = response as? HTTPURLResponse,
+              200..<300 ~= httpResponse.statusCode
+        else {
+            throw ServiceError.noData
         }
-        .resume()
+
+        // Opcional: você pode checar o JSON retornado se quiser, mas não precisa retornar DTO
+        _ = try? JSONSerialization.jsonObject(with: data)
     }
+
 }
 
 enum ServiceError: Error {
