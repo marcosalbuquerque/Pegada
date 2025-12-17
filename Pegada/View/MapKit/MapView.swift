@@ -128,7 +128,7 @@ struct MapView: View {
                                         }
                                     }
                                 }
-                                .padding(.horizontal)
+
                             }
                             
                             
