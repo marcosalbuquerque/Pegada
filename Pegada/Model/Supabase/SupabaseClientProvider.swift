@@ -31,11 +31,7 @@ final class CouponService {
         let response = try await client
             .from("cupons")
             .select("""
-                id,
-                description,
-                price_points,
-                expiration_date,
-                store_id
+                *
             """)
             .eq("is_active", value: true)
             .execute()
