@@ -71,7 +71,7 @@ struct PodiumItemView: View {
                         .fill(Color.podiumGray)
                         .frame(width: 60 * scale, height: 75 * scale)
                     
-                    Text("\(user.points)")
+                    Text("\(user.points, specifier: "%.2f")")
                         .font(.system(size: 17 * scale, weight: .bold))
                         .foregroundColor(.greenHighlight)
                         .lineLimit(1)

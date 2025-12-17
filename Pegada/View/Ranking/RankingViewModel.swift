@@ -51,7 +51,7 @@ final class RankingViewModel: ObservableObject {
             return RankingUser(
                 position: index + 1,
                 name: user.name,
-                points: user.totalPoints,
+                points: user.totalSafeCarbon,
                 userId: uuid
             )
         }

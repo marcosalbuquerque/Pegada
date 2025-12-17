@@ -36,7 +36,7 @@ struct RankingRow: View {
                     .foregroundColor(Color.greenHighlight)
                     .font(.caption)
                 
-                Text("\(user.points)")
+                Text("\(user.points, specifier: "%.2f")")
                     .font(.subheadline)
                     .bold()
                     .padding(.trailing, 14)

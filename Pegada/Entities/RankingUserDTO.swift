@@ -9,5 +9,5 @@
 struct RankingUserDTO: Identifiable, Decodable {
     let id: String
     let name: String
-    let totalPoints: Int
+    let totalSafeCarbon: Double
 }
