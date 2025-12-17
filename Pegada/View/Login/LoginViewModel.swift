@@ -7,6 +7,7 @@
 import Foundation
 import AuthenticationServices
 import Combine
+import SwiftData
 
 @MainActor
 final class LoginViewModel: ObservableObject {
@@ -14,19 +15,29 @@ final class LoginViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let authService = AuthService()
+    private let authService: AuthService
+
+    init(modelContext: ModelContext) {
+        self.authService = AuthService(modelContext: modelContext)
+    }
 
     func loginWithApple(
         result: Result<ASAuthorization, Error>
-    ) async throws -> Profile {
+    ) async throws -> ProfileEntity {
 
         guard
-            let credential = try result.get().credential as? ASAuthorizationAppleIDCredential
+            let credential = try result.get().credential
+                as? ASAuthorizationAppleIDCredential
         else {
-            throw NSError(domain: "AppleAuth", code: 0)
+            throw AuthError.invalidAppleToken
         }
 
-        return try await authService.loginWithApple(credential: credential)
+        return try await authService.loginWithApple(
+            credential: credential
+        )
     }
 }
+
+
+
 

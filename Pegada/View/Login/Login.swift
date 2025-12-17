@@ -1,16 +1,14 @@
-//
-//  Login.swift
-//  Pegada
-//
-//  Created by João Felipe Schwaab on 16/12/25.
-//
 import SwiftUI
 import AuthenticationServices
 
 struct Login: View {
 
     @EnvironmentObject private var appState: AppState
-    @StateObject private var vm = LoginViewModel()
+    @StateObject private var vm: LoginViewModel
+
+    init(viewModel: LoginViewModel) {
+        _vm = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -36,17 +34,18 @@ struct Login: View {
         .padding()
     }
 
-    private func handleLogin(result: Result<ASAuthorization, Error>) async {
+    private func handleLogin(
+        result: Result<ASAuthorization, Error>
+    ) async {
+
         vm.isLoading = true
         vm.errorMessage = nil
 
         do {
             let profile = try await vm.loginWithApple(result: result)
 
-            appState.profile = profile
             appState.isAuthenticated = true
             appState.currentUserId = profile.id
-            
 
         } catch {
             vm.errorMessage = error.localizedDescription
@@ -55,6 +54,3 @@ struct Login: View {
         vm.isLoading = false
     }
 }
-
-
-
