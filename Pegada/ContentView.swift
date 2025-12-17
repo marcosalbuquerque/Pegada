@@ -26,6 +26,15 @@ struct ContentView: View {
                     .tabItem {
                         Label("Loja", systemImage: "bag")
                     }
+                Ranking(currentUserId: userId)
+                    .tabItem {
+                        Label("Ranking", systemImage: "trophy")
+                    }
+                User()
+                    .tabItem {
+                        Label("Perfil", systemImage: "person.fill")
+                    }
+                
             }
 
         } else {
