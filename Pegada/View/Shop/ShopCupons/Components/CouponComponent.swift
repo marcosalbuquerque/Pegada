@@ -45,6 +45,7 @@ struct CouponComponent: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(coupon.name)
                     .font(.headline)
+                    .foregroundStyle(.greenHighlight)
                 Text("\(Int(coupon.price_points)) pontos")
                     .font(.subheadline)
 
@@ -59,7 +60,7 @@ struct CouponComponent: View {
         .padding(12)
         .background(
             LinearGradient(
-                gradient: Gradient(colors: [.white.opacity(0.4), .greenGradient.opacity(0.3)]),
+                gradient: Gradient(colors: [.white.opacity(0.4), .greenGradient.opacity(0.3), .greenGradient.opacity(0.3)]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
