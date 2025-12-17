@@ -13,7 +13,7 @@ struct BuyCuponView: View {
     var body: some View {
         Text("\(coupon.name)")
         Text("\(coupon.description)")
-        Text("\(coupon.price_points)")
+        Text("\(Int(coupon.price_points))")
         Button("Resgatar") {
             viewModel.buy(coupon: coupon)
         }
