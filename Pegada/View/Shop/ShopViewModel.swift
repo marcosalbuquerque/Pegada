@@ -68,28 +68,27 @@ final class ShopViewModel: ObservableObject {
 
         Task {
             self.isLoading = true
-            defer {
-                self.isLoading = false
-                 
-                print("🔄 [VM] Fluxo de compra finalizado")
-            }
+            defer { self.isLoading = false }
 
             do {
                 print("🚀 [VM] Chamando API de resgate...")
-                try await transactionService.redeemCoupon(
+                let result = try await transactionService.redeemCoupon(
                     userId: profile.id,
                     couponId: coupon.id
                 )
 
+
                 print("🔁 [VM] Recarregando perfil...")
                 self.userProfile = try self.profileStore.fetchCurrentProfile()
+
 
                 self.successMessage = "Cupom comprado com sucesso"
                 print("✅ [VM] Compra concluída")
 
             } catch {
-                self.errorMessage = "Falha na transação"
-                print("❌ [VM] Erro na compra:", error)
+                // Mostra a mensagem específica do backend
+                self.errorMessage = error.localizedDescription
+                print("❌ [VM] Erro na compra:", error.localizedDescription)
             }
         }
     }
