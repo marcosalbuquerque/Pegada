@@ -9,8 +9,15 @@ import Foundation
 
 enum APIError: Error {
     case invalidURL
-    case httpError(Int)
+    case httpError(Int, String)
     case decodingError
+}
+
+struct RedeemResponse: Decodable {
+    let success: Bool
+    let message: String?
+    let cuponRedeemed: CuponRedeemed?
+    let remaining_points: Int64?
 }
 
 final class CouponAPIService {
@@ -24,11 +31,8 @@ final class CouponAPIService {
 
     func redeemCoupon(userId: UUID, couponId: Int) async throws {
         print("🚀 [API] Iniciando resgate")
-        print("👤 userId:", userId)
-        print("🎟️ couponId:", couponId)
 
         guard let url = URL(string: "\(baseURL)/cuponRedeemed/createCuponRedeemed") else {
-            print("❌ [API] URL inválida")
             throw APIError.invalidURL
         }
 
@@ -41,26 +45,31 @@ final class CouponAPIService {
             cupom_id: couponId
         )
 
-        let jsonData = try JSONEncoder().encode(body)
-        request.httpBody = jsonData
+        request.httpBody = try JSONEncoder().encode(body)
 
-        print("📦 [API] Body JSON:")
-        print(String(data: jsonData, encoding: .utf8) ?? "JSON inválido")
-
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            print("❌ [API] Resposta inválida")
-            throw APIError.httpError(0)
+            throw APIError.httpError(0, "Resposta inválida do servidor")
         }
 
-        print("📡 [API] Status code:", httpResponse.statusCode)
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            print("❌ [API] Erro HTTP:", httpResponse.statusCode)
-            throw APIError.httpError(httpResponse.statusCode)
+        let decoded: RedeemResponse
+        do {
+            print(String(data: data, encoding: .utf8) ?? "JSON inválido")
+            decoded = try JSONDecoder().decode(RedeemResponse.self, from: data)
+        } catch {
+            print("❌ [API] Falha ao decodificar JSON")
+            throw APIError.decodingError
         }
 
-        print("✅ [API] Cupom resgatado com sucesso")
+        // Se backend retorna erro (status >=400 ou success=false), lançamos o erro com a mensagem
+        if httpResponse.statusCode >= 400 || !decoded.success {
+            throw APIError.httpError(
+                httpResponse.statusCode,
+                decoded.message ?? "Erro desconhecido do backend"
+            )
+        }
+
+        print("✅ [API] Cupom resgatado com sucesso:", decoded.cuponRedeemed?.id ?? "")
     }
 }

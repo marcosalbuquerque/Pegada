@@ -22,8 +22,6 @@ struct BuyCuponView: View {
             // Fundo escuro da tela
             Color .backGroundPerfil
                 .ignoresSafeArea()
-            
-            
             VStack {
                 Spacer()
                 // Card Principal
@@ -112,7 +110,6 @@ struct BuyCuponView: View {
                 .alert("Sucesso", isPresented: $ShowAlert){
                     Button("Ok") {
                         dismiss()
-                        
                     }
                 }message: {
                     Text("O cupom foi resgatado com sucesso!")
