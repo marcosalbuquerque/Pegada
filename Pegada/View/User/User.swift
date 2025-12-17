@@ -17,6 +17,19 @@ struct User: View {
     // MARK: - Local State
     @State private var editedName: String = ""
     @State private var isEditing: Bool = false
+    
+    let mockDailyCarbon: [DailyCarbonEntity] = [
+        DailyCarbonEntity(day: "Mon", value: 2.5),
+        DailyCarbonEntity(day: "Tue", value: 3.0),
+        DailyCarbonEntity(day: "Wed", value: 1.8),
+        DailyCarbonEntity(day: "Thur", value: 2.2),
+        DailyCarbonEntity(day: "Fri", value: 2.9),
+        DailyCarbonEntity(day: "Sat", value: 3.1),
+        DailyCarbonEntity(day: "Sun", value: 2.7)
+    ]
+    
+    let totalCarbonMock : Double
+
 
     // MARK: - Init
     init(currentUserId: UUID, modelContext: ModelContext, userService: UserService) {
@@ -27,6 +40,8 @@ struct User: View {
                 userService: userService
             )
         )
+        
+        totalCarbonMock = mockDailyCarbon.reduce(0) { $0 + $1.value }
     }
 
     var body: some View {
@@ -69,8 +84,8 @@ struct User: View {
                             VStack(spacing: 16) {
                                 
                                 //TODO: Pegar os dados corretamente pela viewModel
-                                CarbonChart(data: [], totalSafeCarbon: profile.totalSafeCarbon)
-                                
+                                CarbonChart(data: mockDailyCarbon, totalSafeCarbon: totalCarbonMock)
+
                                 ProfileStatRow(
                                     icon: "star.fill",
                                     title: "Pontos Totais",

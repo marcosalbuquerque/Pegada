@@ -12,9 +12,19 @@ import Foundation
 final class ProfileStore {
 
     private let context: ModelContext
+    private var actualProfile : ProfileEntity?
 
     init(context: ModelContext) {
         self.context = context
+        let descriptor = FetchDescriptor<ProfileEntity>()
+        
+        self.actualProfile = nil
+        
+        do {
+            actualProfile = try context.fetch(descriptor).first
+        } catch {
+            print(error)
+        }
     }
 
     func save(profile: Profile) throws {
@@ -33,6 +43,24 @@ final class ProfileStore {
         let profiles = try context.fetch(descriptor)
         profiles.forEach { context.delete($0) }
         try context.save()
+    }
+    
+    func decrementPoints(pointsToDecrement: Int) throws {
+        do {
+            actualProfile?.currentPoints = (actualProfile?.currentPoints ?? 0) - Int64(pointsToDecrement)
+        }
+    }
+    
+    func incrementPoints(pointsToIncrement : Int) throws {
+        do {
+            actualProfile?.currentPoints = (actualProfile?.currentPoints ?? 0) + Int64(pointsToIncrement)
+        }
+    }
+    
+    func incrementCarbonStep(quantity: Double) throws {
+        do {
+            actualProfile?.totalSafeCarbon += quantity
+        }
     }
 }
 
