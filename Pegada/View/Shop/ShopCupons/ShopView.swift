@@ -26,10 +26,10 @@ struct ShopView: View {
     var body: some View {
         
         NavigationStack {
-            ZStack {
-                // Fundo escuro da tela
-                Color .backGroundPerfil
+            ZStack{
+                Color .headerDark
                     .ignoresSafeArea()
+                
                 ScrollView {
                     VStack {
                         if let profile = viewModel.userProfile {
@@ -66,9 +66,7 @@ struct ShopView: View {
                 .task {
                     await viewModel.loadData(userId: currentUserId)
                 }
-                
             }
-            
         }
     }
 }

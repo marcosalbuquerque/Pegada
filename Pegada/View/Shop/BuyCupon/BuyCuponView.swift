@@ -20,7 +20,7 @@ struct BuyCuponView: View {
     var body: some View {
         ZStack {
             // Fundo escuro da tela
-            Color .backGroundPerfil
+            Color .headerDark
                 .ignoresSafeArea()
             VStack {
                 Spacer()
@@ -72,7 +72,7 @@ struct BuyCuponView: View {
                     
                     HStack{
                         Circle()
-                            .fill(Color .backGroundPerfil)
+                            .fill(Color .headerDark)
                             .offset(x: -17)
                             .frame(height: 40)
                         
@@ -84,7 +84,7 @@ struct BuyCuponView: View {
                             .padding(.horizontal)
                         
                         Circle()
-                            .fill(Color .backGroundPerfil)
+                            .fill(Color .headerDark)
                             .offset(x: 17)
                             .frame(height: 40)
                     }
