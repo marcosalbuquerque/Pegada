@@ -13,6 +13,8 @@ struct Coupon: Identifiable, Decodable {
     let price_points: Double
     let expiration_date: Date
     let store_id: Int
+    let name: String
+    let img_url: String
 }
 
 
