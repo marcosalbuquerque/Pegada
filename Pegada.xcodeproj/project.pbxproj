@@ -19,9 +19,22 @@
 		DEBD25712EF1CABF00528F7A /* Pegada.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pegada.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DEFA58EE2EF260EF00512817 /* Exceptions for "Pegada" folder in "Pegada" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DEBD25702EF1CABF00528F7A /* Pegada */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DEBD25732EF1CABF00528F7A /* Pegada */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DEFA58EE2EF260EF00512817 /* Exceptions for "Pegada" folder in "Pegada" target */,
+			);
 			path = Pegada;
 			sourceTree = "<group>";
 		};
@@ -292,6 +305,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TLXUVK2HK2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pegada/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Usamos sua localização para calcular rotas até os destinos escolhidos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -332,6 +346,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TLXUVK2HK2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pegada/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Usamos sua localização para calcular rotas até os destinos escolhidos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
