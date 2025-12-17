@@ -9,17 +9,29 @@ import Foundation
 import SwiftUI
 import Supabase // Garanta que isso está importado
 import Combine
+import SwiftData
+
 @MainActor
 final class ShopViewModel: ObservableObject {
 
     @Published var coupons: [Coupon] = []
-    @Published var userProfile: Profile?
+    @Published var userProfile: ProfileEntity?
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var successMessage: String?
 
     private let dataService = CouponService()
     private let transactionService = CouponAPIService()
+    
+    private let userId: UUID
+    private let userService: UserService
+    private let profileStore: ProfileStore
+
+    init(userId: UUID, modelContext :  ModelContext, userService: UserService) {
+        self.userId = userId
+        self.profileStore = ProfileStore(context: modelContext)
+        self.userService = userService
+    }
 
     func loadData(userId: UUID) async {
         print("🔄 [VM] loadData iniciado para user:", userId)
@@ -32,10 +44,7 @@ final class ShopViewModel: ObservableObject {
 
         do {
             self.coupons = try await dataService.fetchCoupons()
-            print("🧾 [VM] Cupons carregados:", coupons.count)
-
-            self.userProfile = try await fetchUserProfile(userId: userId)
-            print("👤 [VM] Perfil carregado. Pontos:", userProfile?.currentPoints ?? 0)
+            self.userProfile = try self.profileStore.fetchCurrentProfile()
 
         } catch {
             self.errorMessage = "Erro ao carregar dados"
@@ -59,27 +68,27 @@ final class ShopViewModel: ObservableObject {
 
         Task {
             self.isLoading = true
-            defer {
-                self.isLoading = false
-                print("🔄 [VM] Fluxo de compra finalizado")
-            }
+            defer { self.isLoading = false }
 
             do {
                 print("🚀 [VM] Chamando API de resgate...")
-                try await transactionService.redeemCoupon(
+                let result = try await transactionService.redeemCoupon(
                     userId: profile.id,
                     couponId: coupon.id
                 )
 
+
                 print("🔁 [VM] Recarregando perfil...")
-                self.userProfile = try await fetchUserProfile(userId: profile.id)
+                self.userProfile = try self.profileStore.fetchCurrentProfile()
+
 
                 self.successMessage = "Cupom comprado com sucesso"
                 print("✅ [VM] Compra concluída")
 
             } catch {
-                self.errorMessage = "Falha na transação"
-                print("❌ [VM] Erro na compra:", error)
+                // Mostra a mensagem específica do backend
+                self.errorMessage = error.localizedDescription
+                print("❌ [VM] Erro na compra:", error.localizedDescription)
             }
         }
     }

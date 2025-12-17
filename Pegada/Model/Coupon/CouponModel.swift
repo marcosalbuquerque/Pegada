@@ -13,8 +13,18 @@ struct Coupon: Identifiable, Decodable {
     let price_points: Double
     let expiration_date: Date
     let store_id: Int
+    let name: String
+    let img_url: String
 }
 
+struct CuponRedeemed: Decodable {
+    let id: Int
+    let used_at: String?
+    let cupom_id: Int
+    let is_active: Bool?
+    let user_id: UUID?
+    let rescue_at: String?
+}
 
 struct Store: Decodable {
     let id: UUID
