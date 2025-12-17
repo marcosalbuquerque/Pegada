@@ -32,7 +32,7 @@ struct RankingRow: View {
             Spacer()
             
             HStack(spacing: 4) {
-                Image(systemName: "star.fill")
+                Image(systemName: "leaf.fill")
                     .foregroundColor(Color.greenHighlight)
                     .font(.caption)
                 
