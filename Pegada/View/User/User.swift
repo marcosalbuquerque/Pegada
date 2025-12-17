@@ -46,7 +46,7 @@ struct User: View {
                                     .fill(Color.green.opacity(0.3))
                                     .frame(width: 100, height: 100)
                                     .overlay(
-                                        Text(initials(from: profile.name))
+                                        Text(initials(from: profile.name ?? " "))
                                             .font(.largeTitle.bold())
                                             .foregroundColor(.green)
                                     )
@@ -56,11 +56,11 @@ struct User: View {
                                         .textFieldStyle(.roundedBorder)
                                         .multilineTextAlignment(.center)
                                 } else {
-                                    Text(profile.name)
+                                    Text(profile.name ?? " ")
                                         .font(.title2.bold())
                                 }
 
-                                Text(profile.email)
+                                Text(profile.email ?? " ")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -68,7 +68,8 @@ struct User: View {
                             // Stats
                             VStack(spacing: 16) {
                                 
-                                CarbonChart(data: profile.WeeklyHistory ?? [], totalSafeCarbon: profile.totalSafeCarbon)
+                                //TODO: Pegar os dados corretamente pela viewModel
+                                CarbonChart(data: [], totalSafeCarbon: profile.totalSafeCarbon)
                                 
                                 ProfileStatRow(
                                     icon: "star.fill",
@@ -87,10 +88,12 @@ struct User: View {
                             VStack(spacing: 12) {
                                 Button {
                                     if isEditing {
-                                        vm.updateUserName(editedName)
-                                        isEditing = false
+                                        Task {
+                                            await vm.updateUserName(editedName)
+                                            isEditing = false
+                                        }
                                     } else {
-                                        editedName = profile.name
+                                        editedName = profile.name ?? " "
                                         isEditing = true
                                     }
                                 } label: {

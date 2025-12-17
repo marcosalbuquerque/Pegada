@@ -23,6 +23,7 @@ final class ProfileEntity {
     var totalSafeCarbon: Double
     var createdAt: Date
     var updatedAt: Date
+    var WeeklyHistory: [DailyCarbonEntity]?
 
     init(from profile: Profile) {
         self.id = profile.id
