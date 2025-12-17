@@ -34,6 +34,27 @@ final class ProfileStore {
         profiles.forEach { context.delete($0) }
         try context.save()
     }
+    
+    func sincWithApi(profile: UserProfileDTO) {
+            do {
+                guard let actualProfile = try fetchCurrentProfile() else {
+                    print("⚠️ Nenhum perfil local encontrado")
+                    return
+                }
+
+                actualProfile.name = profile.name
+                actualProfile.email = profile.email
+                actualProfile.currentPoints = Int64(profile.currentPoints)
+                actualProfile.totalPoints = Int64(profile.totalPoints)
+                actualProfile.totalSafeCarbon = profile.totalSafeCarbon
+
+                try context.save()
+                print("✅ Perfil local sincronizado com a API")
+
+            } catch {
+                print("❌ Erro ao sincronizar perfil:", error)
+            }
+        }
 }
 
 extension ProfileStore {
