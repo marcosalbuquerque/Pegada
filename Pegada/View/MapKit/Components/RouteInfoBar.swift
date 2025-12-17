@@ -13,27 +13,69 @@ struct RouteInfoBar: View {
     let route: MKRoute
     let mode: TransportMode
     let onCancel: () -> Void
+    let onStartNavigation: () -> Void
+    let result: TripResult
 
     var body: some View {
-        HStack(spacing: 12) {
-            
-            Label(timeText, systemImage: "clock")
-            Label(distanceText, systemImage: "map")
+        VStack(spacing: 16) {
+            HStack(spacing: 12) {
+                
+                VStack(alignment: .leading) {
+                    Label(timeText, systemImage: "clock")
+                        .font(.headline)
+                        .foregroundStyle(.green)
+                    Label(distanceText, systemImage: "map")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
 
-            Spacer()
+                Spacer()
 
-            Image(systemName: mode.icon)
+                Image(systemName: mode.icon)
+                    .font(.title2)
 
-            Button {
-                onCancel()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title3)
+                Button {
+                    onCancel()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
             }
-            .accessibilityLabel("Cancelar rota")
+            
+            HStack {
+                Group {
+                    // Carbono Economizado
+                    Label("\(Int(result.carbonSavedGrams)) g CO₂", systemImage: "leaf.fill")
+                        .foregroundColor(.green)
+                    
+                    // Pontos Ganhos
+                    Label("\(result.pointsEarned) Pontos", systemImage: "sparkles")
+                        .foregroundColor(.yellow)
+                        .fontWeight(.bold)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .cornerRadius(8)
+            }
+            
+            
+            Button(action: onStartNavigation) {
+                Text("Iniciar")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(.green)
+                    .cornerRadius(12)
+            }
         }
         .padding()
         .background(.thinMaterial)
+        .cornerRadius(20)
+        .shadow(radius: 5)
+        .padding(.horizontal)
+        .padding(.bottom, 5)
     }
 
     private var timeText: String {
