@@ -15,116 +15,100 @@ struct NavigationStatusView: View {
     let route: MKRoute
     let tripResult: TripResult
     
-    // Recebe os valores calculados em tempo real
+    // Valores calculados em tempo real vindos da MapView
     let currentProgress: (points: Int, co2: Double, progress: Double)
     let formatDistance: (CLLocationDistance) -> String
     let onStop: () -> Void
     
     var body: some View {
-        VStack(spacing: 16) {
-            
+        VStack(spacing: 20) {
             // 1. Cabeçalho (Destino e Botão Parar)
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
+            HStack(alignment: .center, spacing: 15) {
+                ZStack {
+                    Circle()
+                        .fill(Color.blue.opacity(0.2))
+                        .frame(width: 50, height: 50)
+                    Image(systemName: "location.north.fill")
+                        .font(.title2)
+                        .foregroundStyle(.blue)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Em viagem para")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     
                     Text(destinationName)
                         .font(.headline)
+                        .foregroundStyle(.white)
                         .lineLimit(1)
-                    
-                    // Mostra distância total (ou poderia mostrar restante se calculado)
-                    Text("Total: \(formatDistance(route.distance))")
-                        .font(.subheadline)
-                        .bold()
-                        .foregroundStyle(.blue)
-                        .padding(.top, 2)
                 }
                 
                 Spacer()
                 
                 Button(action: onStop) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(10)
-                        .background(.red)
-                        .clipShape(Circle())
-                        .shadow(radius: 3)
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.red.opacity(0.8))
                 }
             }
             
             // 2. Barra de Progresso Visual
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
+                HStack {
+                    Text(formatDistance(route.distance * currentProgress.progress))
+                        .font(.caption.bold())
+                        .foregroundStyle(.blue)
+                    Spacer()
+                    Text("Faltam \(formatDistance(route.distance * (1 - currentProgress.progress)))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        // Fundo da barra
                         Capsule()
                             .frame(height: 8)
-                            .foregroundStyle(.gray.opacity(0.2))
+                            .foregroundStyle(.white.opacity(0.1))
                         
-                        // Barra preenchida
                         Capsule()
                             .frame(width: geo.size.width * currentProgress.progress, height: 8)
                             .foregroundStyle(
-                                LinearGradient(colors: [.green, .mint], startPoint: .leading, endPoint: .trailing)
+                                LinearGradient(colors: [.blue, .mint], startPoint: .leading, endPoint: .trailing)
                             )
-                            .animation(.linear, value: currentProgress.progress)
+                            .animation(.spring(), value: currentProgress.progress)
                     }
                 }
                 .frame(height: 8)
-                
-                // 3. Métricas (CO2 e Pontos)
-                HStack {
-                    // Carbono
-                    HStack(spacing: 4) {
-                        Image(systemName: "leaf.fill")
-                            .foregroundStyle(.green)
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("\(Int(currentProgress.co2))g")
-                                .font(.body.bold())
-                                .contentTransition(.numericText(value: currentProgress.co2)) // Animação bonita dos números
-                            
-                            Text("/ \(Int(tripResult.carbonSavedGrams))g")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Divisor vertical pequeno
-                    Rectangle()
-                        .fill(.gray.opacity(0.3))
-                        .frame(width: 1, height: 20)
-                    
-                    Spacer()
-                    
-                    // Pontos
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .foregroundStyle(.yellow)
-                        VStack(alignment: .trailing, spacing: 0) {
-                            Text("\(currentProgress.points)")
-                                .font(.body.bold())
-                                .contentTransition(.numericText(value: Double(currentProgress.points)))
-                            
-                            Text("/ \(tripResult.pointsEarned) pts")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                .padding(.top, 4)
             }
-            .padding()
-            .cornerRadius(12)
+            
+            // 3. Métricas de Impacto em Tempo Real (Cápsulas Estilizadas)
+            HStack(spacing: 12) {
+                // Cápsula de CO2
+                ImpactCapsule(
+                    text: "\(Int(currentProgress.co2))g / \(Int(tripResult.carbonSavedGrams))g",
+                    icon: "leaf.fill",
+                    color: Color("DarkGreenGradient")
+                )
+                .contentTransition(.numericText(value: currentProgress.co2))
+                
+                // Cápsula de Pontos
+                ImpactCapsule(
+                    text: "\(currentProgress.points) / \(tripResult.pointsEarned) pts",
+                    icon: "star.fill",
+                    color: Color("DarkGreenGradient")
+                )
+                .contentTransition(.numericText(value: Double(currentProgress.points)))
+            }
         }
-        .padding()
+        .padding(20)
         .background(.ultraThinMaterial)
-        .cornerRadius(20)
-        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+        .cornerRadius(28)
+        .overlay(
+            RoundedRectangle(cornerRadius: 28)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+        )
         .padding()
+        .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
     }
 }
