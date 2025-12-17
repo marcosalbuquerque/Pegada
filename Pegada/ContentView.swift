@@ -50,21 +50,18 @@ struct ContentView: View {
                     .tabItem {
                         Label("Loja", systemImage: "bag")
                     }
-                
-                // 3. RANKING
-                Text("Ranking de Usuários")
+                Ranking(currentUserId: userId)
                     .tabItem {
-                        Label("Ranking", systemImage: "trophy.fill")
+                        Label("Ranking", systemImage: "trophy")
                     }
-                
-                // 4. PERFIL
-                Text("Perfil do Usuário")
+                User(currentUserId: userId.uuidString)
                     .tabItem {
                         Label("Perfil", systemImage: "person.fill")
                     }
+                
             }
 
-                SharingView()
+//                SharingView()
             } else {
                 Login()
             }
