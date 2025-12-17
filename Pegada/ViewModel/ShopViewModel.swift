@@ -61,6 +61,7 @@ final class ShopViewModel: ObservableObject {
             self.isLoading = true
             defer {
                 self.isLoading = false
+                 
                 print("🔄 [VM] Fluxo de compra finalizado")
             }
 
