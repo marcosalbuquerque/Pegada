@@ -12,6 +12,15 @@ enum TransportMode: String, CaseIterable, Identifiable {
     case bicicleta = "Bicicleta"
     case patinete = "Patinete"
     case transportePublico = "Transporte"
+    
+    var emissionFactor: Double {
+        switch self {
+        case .aPe, .bicicleta, .patinete:
+            return 0.0 // Caminhada, Bicicleta, Patinete = 0 gCO2/km
+        case .transportePublico:
+            return 100.0 // Usando 100.0 (Ônibus) como valor conservador para T.Público
+        }
+    }
 
     var id: String { rawValue }
 
@@ -43,4 +52,11 @@ enum TransportMode: String, CaseIterable, Identifiable {
         case .transportePublico: return "bus.fill"
         }
     }
+}
+
+struct TripResult {
+    let distanceKm: Double
+    let mode: TransportMode
+    let carbonSavedGrams: Double
+    let pointsEarned: Int
 }

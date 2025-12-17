@@ -24,6 +24,7 @@ extension MapView {
 
         route = nil
         routeErrorMessage = nil
+        tripResult = nil
 
         let request = MKDirections.Request()
         request.source = .forCurrentLocation()
@@ -49,15 +50,16 @@ extension MapView {
             withAnimation {
                 self.route = firstRoute
                 self.camera = .rect(firstRoute.polyline.boundingMapRect)
+                self.finalizeRoute(route: firstRoute)
             }
         }
     }
-
 
     func clearRoute() {
         searchText = ""
         selectedDestination = nil
         route = nil
+        tripResult = nil
         camera = .userLocation(fallback: .automatic)
     }
 
@@ -76,6 +78,7 @@ extension MapView {
             route = nil
             routeErrorMessage = nil
             selectedDestination = nil
+            tripResult = nil
             camera = .userLocation(fallback: .automatic)
         }
     }
