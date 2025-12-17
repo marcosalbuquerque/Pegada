@@ -26,11 +26,12 @@ struct NavigationStatusView: View {
             HStack(alignment: .center, spacing: 15) {
                 ZStack {
                     Circle()
-                        .fill(Color.blue.opacity(0.2))
+                        .fill(Color("GreenHighlight").opacity(0.2))
                         .frame(width: 50, height: 50)
-                    Image(systemName: "location.north.fill")
-                        .font(.title2)
-                        .foregroundStyle(.blue)
+                    Image(tripResult.mode.assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {

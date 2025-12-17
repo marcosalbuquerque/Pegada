@@ -44,8 +44,11 @@ struct ImpactCard: View {
                     Text(mode.rawValue)
                         .foregroundStyle(.white)
                 } icon: {
-                    Image(systemName: mode.icon)
-                        .foregroundStyle(Color("GreenHighlight"))
+                    Image(mode.assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24) // Ajuste o tamanho conforme necessário
+                       // .foregroundStyle(Color("GreenHighlight"))
                 }
                 .fontWeight(.semibold)
                 

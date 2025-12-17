@@ -24,9 +24,12 @@ struct RouteInfoBar: View {
                     Circle()
                         .fill(Color("GreenHighlight").opacity(0.2))
                         .frame(width: 50, height: 50)
-                    Image(systemName: mode.icon)
+                    Image(mode.assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
                         .font(.title2)
-                        .foregroundStyle(Color("GreenHighlight"))
+                       // .foregroundStyle(Color("GreenHighlight"))
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {

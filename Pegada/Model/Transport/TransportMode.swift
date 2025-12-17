@@ -43,6 +43,16 @@ enum TransportMode: String, CaseIterable, Identifiable {
             return 1.0
         }
     }
+    
+    // Propriedade para imagens customizadas do Assets
+    var assetName: String {
+        switch self {
+        case .aPe: return "pe"
+        case .bicicleta: return "bike"
+        case .patinete: return "patinete"
+        case .transportePublico: return "onibus"
+        }
+    }
 
     var icon: String {
         switch self {
