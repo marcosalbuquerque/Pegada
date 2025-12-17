@@ -20,3 +20,23 @@ final class SupabaseClientProvider {
         supabaseKey: SupabaseConfig.anonKey
     )
 }
+
+final class CouponService {
+
+    private let client = SupabaseClientProvider.shared
+
+    func fetchCoupons() async throws -> [Coupon] {
+        try await client
+            .from("cupons")
+            .select("""
+                id,
+                description,
+                price,
+                expiration_date,
+                loja_id
+            """)
+            .eq("is_active", value: true)
+            .execute()
+            .value
+    }
+}
