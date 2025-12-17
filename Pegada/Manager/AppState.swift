@@ -14,4 +14,5 @@ final class AppState: ObservableObject {
 
     @Published var isAuthenticated: Bool = false
     @Published var profile: Profile?
+    @Published var currentUserId: UUID?
 }
