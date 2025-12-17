@@ -54,14 +54,14 @@ struct ContentView: View {
                     .tabItem {
                         Label("Ranking", systemImage: "trophy")
                     }
-                User()
+                User(currentUserId: userId.uuidString)
                     .tabItem {
                         Label("Perfil", systemImage: "person.fill")
                     }
                 
             }
 
-                SharingView()
+//                SharingView()
             } else {
                 Login()
             }

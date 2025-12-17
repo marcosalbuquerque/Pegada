@@ -8,127 +8,142 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct User: View {
 
-    // MARK: - Mock Profile Data
-    @State private var name: String = "João Felipe"
-    @State private var email: String = "joao@email.com"
-    @State private var totalPoints: Int = 11040
-    @State private var currentPoints: Int = 3200
-    @State private var totalSafeCarbon: Double = 128.5
+    // MARK: - ViewModel
+    @StateObject private var vm: UserViewModel
 
+    // MARK: - Local State
+    @State private var editedName: String = ""
     @State private var isEditing: Bool = false
-    @State private var isSaving: Bool = false
+
+    // MARK: - Init
+    init(currentUserId: String) {
+        let service = UserService(
+            baseURL: "https://pegada-backend-production.up.railway.app/api"
+        )
+
+        _vm = StateObject(
+            wrappedValue: UserViewModel(
+                userService: service,
+                userId: currentUserId
+            )
+        )
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                if let profile = vm.profile {
+                    VStack(spacing: 24) {
 
-                    // Avatar
-                    VStack(spacing: 12) {
-                        Circle()
-                            .fill(Color.green.opacity(0.3))
-                            .frame(width: 100, height: 100)
-                            .overlay(
-                                Text(initials)
-                                    .font(.largeTitle.bold())
-                                    .foregroundColor(.green)
+                        // Avatar
+                        VStack(spacing: 12) {
+                            Circle()
+                                .fill(Color.green.opacity(0.3))
+                                .frame(width: 100, height: 100)
+                                .overlay(
+                                    Text(initials(from: profile.name))
+                                        .font(.largeTitle.bold())
+                                        .foregroundColor(.green)
+                                )
+
+                            if isEditing {
+                                TextField("Nome", text: $editedName)
+                                    .textFieldStyle(.roundedBorder)
+                                    .multilineTextAlignment(.center)
+                            } else {
+                                Text(profile.name)
+                                    .font(.title2.bold())
+                            }
+
+                            Text(profile.email)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        // Stats
+                        VStack(spacing: 16) {
+                            ProfileStatRow(
+                                icon: "star.fill",
+                                title: "Pontos Totais",
+                                value: "\(profile.totalPoints)"
                             )
 
-                        if isEditing {
-                            TextField("Nome", text: $name)
-                                .textFieldStyle(.roundedBorder)
-                                .multilineTextAlignment(.center)
-                        } else {
-                            Text(name)
-                                .font(.title2.bold())
+                            ProfileStatRow(
+                                icon: "bolt.fill",
+                                title: "Pontos Atuais",
+                                value: "\(profile.currentPoints)"
+                            )
+
+                            ProfileStatRow(
+                                icon: "leaf.fill",
+                                title: "Carbono Evitado",
+                                value: "\(profile.totalSafeCarbon) kg"
+                            )
                         }
 
-                        Text(email)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    // Stats
-                    VStack(spacing: 16) {
-                        ProfileStatRow(
-                            icon: "star.fill",
-                            title: "Pontos Totais",
-                            value: "\(totalPoints)"
-                        )
-
-                        ProfileStatRow(
-                            icon: "bolt.fill",
-                            title: "Pontos Atuais",
-                            value: "\(currentPoints)"
-                        )
-
-                        ProfileStatRow(
-                            icon: "leaf.fill",
-                            title: "Carbono Evitado",
-                            value: "\(totalSafeCarbon) kg"
-                        )
-                    }
-
-                    // Actions
-                    VStack(spacing: 12) {
-                        Button {
-                            if isEditing {
-                                saveProfile()
-                            } else {
-                                isEditing = true
-                            }
-                        } label: {
-                            Text(isEditing ? "Salvar Perfil" : "Editar Perfil")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.green)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
-
-                        if isEditing {
+                        // Actions
+                        VStack(spacing: 12) {
                             Button {
-                                cancelEdit()
+                                if isEditing {
+                                    vm.updateUserName(editedName)
+                                    isEditing = false
+                                } else {
+                                    editedName = profile.name
+                                    isEditing = true
+                                }
                             } label: {
-                                Text("Cancelar")
+                                Text(isEditing ? "Salvar Perfil" : "Editar Perfil")
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .foregroundColor(.red)
+                                    .background(Color.green)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(12)
+                            }
+                            .disabled(vm.isLoading)
+
+                            if isEditing {
+                                Button {
+                                    isEditing = false
+                                } label: {
+                                    Text("Cancelar")
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
                     }
+                    .padding()
                 }
-                .padding()
+
+                if vm.isLoading {
+                    ProgressView("Carregando perfil...")
+                        .padding()
+                }
+
+                if let error = vm.errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                }
             }
             .navigationTitle("Perfil")
+            .onAppear {
+                vm.loadUserProfile()
+            }
         }
     }
 
     // MARK: - Helpers
-    private var initials: String {
+    private func initials(from name: String) -> String {
         let parts = name.split(separator: " ")
         let first = parts.first?.first ?? "?"
         let last = parts.last?.first ?? "?"
         return "\(first)\(last)"
-    }
-
-    private func saveProfile() {
-        isSaving = true
-
-        // 🔌 Aqui depois você chama:
-        // UserService.updateUserName(...)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            isSaving = false
-            isEditing = false
-        }
-    }
-
-    private func cancelEdit() {
-        // 🔁 Resetaria os dados vindo do backend
-        isEditing = false
     }
 }
 
@@ -159,7 +174,3 @@ struct ProfileStatRow: View {
     }
 }
 
-
-#Preview {
-    User()
-}
