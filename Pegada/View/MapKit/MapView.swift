@@ -47,7 +47,10 @@ struct MapView: View {
                     MapPolyline(route)
                         .stroke(.blue, lineWidth: 5)
                 }
-            }
+            }.preferredColorScheme(.dark)
+                .overlay(.darkGreenGradient.opacity(0.25))
+
+            
             // CONTROLES DO MAPA
             .mapControls {
                 if !isNavigating {
@@ -65,8 +68,17 @@ struct MapView: View {
                 if !isNavigating {
                     VStack(spacing: 12) {
                         
+                        HStack{
+                            Text("\(periodoAtual().texto), Epsilon")
+                                .font(.largeTitle)
+                                .bold()
+                                
+                            Spacer()
+                        }
+                        
                         HStack {
                             Image(systemName: "magnifyingglass")
+                                .foregroundColor(.greenHighlight)
                             
                             TextField("Pesquisar local...", text: $searchText)
                                 .onSubmit { performSearch() }
@@ -79,7 +91,13 @@ struct MapView: View {
                         }
                         .padding()
                         .background(.ultraThinMaterial)
-                        .cornerRadius(10)
+                        .overlay(.gray.opacity(0.50))
+                        .cornerRadius(200)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 200)
+                                .stroke(Color.greenHighlight, lineWidth: 1)
+                        )
+
                         
                         Picker("Transporte", selection: $selectedMode) {
                             ForEach(TransportMode.allCases) { mode in
