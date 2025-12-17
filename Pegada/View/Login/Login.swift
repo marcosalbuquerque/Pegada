@@ -4,12 +4,12 @@
 //
 //  Created by João Felipe Schwaab on 16/12/25.
 //
-
 import SwiftUI
 import AuthenticationServices
 
 struct Login: View {
 
+    @EnvironmentObject private var appState: AppState
     @StateObject private var vm = LoginViewModel()
 
     var body: some View {
@@ -19,23 +19,40 @@ struct Login: View {
                 ProgressView()
             }
 
-            if let profile = vm.profile {
-                Text("Bem-vindo, \(profile.name ?? "Usuário")")
-                Text("Pontos: \(profile.currentPoints)")
-            }
-
-            if let errorMessage = vm.errorMessage {
-                Text(errorMessage)
+            if let error = vm.errorMessage {
+                Text(error)
                     .foregroundColor(.red)
             }
 
             SignInWithAppleButton { request in
                 request.requestedScopes = [.email, .fullName]
             } onCompletion: { result in
-                vm.loginWithApple(result: result)
+                Task {
+                    await handleLogin(result: result)
+                }
             }
             .fixedSize()
         }
         .padding()
     }
+
+    private func handleLogin(result: Result<ASAuthorization, Error>) async {
+        vm.isLoading = true
+        vm.errorMessage = nil
+
+        do {
+            let profile = try await vm.loginWithApple(result: result)
+
+            appState.profile = profile
+            appState.isAuthenticated = true
+
+        } catch {
+            vm.errorMessage = error.localizedDescription
+        }
+
+        vm.isLoading = false
+    }
 }
+
+
+

@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+
+    @EnvironmentObject private var appState: AppState
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        if appState.isAuthenticated {
+            MapView()
+        } else {
+            Login()
         }
-        .padding()
     }
 }
+
 
 #Preview {
     ContentView()

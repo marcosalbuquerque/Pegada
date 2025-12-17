@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct PegadaApp: App {
+    
+    @StateObject private var appState = AppState()
+
     var body: some Scene {
         WindowGroup {
-            Login()
+            ContentView()
+                .environmentObject(appState)
         }
     }
 }
