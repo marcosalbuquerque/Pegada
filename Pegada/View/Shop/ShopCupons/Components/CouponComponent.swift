@@ -11,16 +11,16 @@ import UIKit
 struct CouponComponent: View {
     @ObservedObject var viewModel: ShopViewModel
     @State private var uiImage: UIImage? = nil
-
+    
     var coupon: Coupon
-
+    
     static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateStyle = .short
         f.timeStyle = .none
         return f
     }()
-
+    
     var body: some View {
         HStack(spacing: 20) {
             HStack {
@@ -30,7 +30,7 @@ struct CouponComponent: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 56, height: 56)
-                            .clipped() 
+                            .clipped()
                             .cornerRadius(8)
                     } else {
                         Color.yellow.opacity(0.4)
@@ -41,26 +41,34 @@ struct CouponComponent: View {
                 .padding(.horizontal, 6)
                 Image("DividerImage")
             }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(coupon.name)
-                    .font(.headline)
-                    .foregroundStyle(.greenHighlight)
-                Text("\(Int(coupon.price_points)) pontos")
-                    .font(.subheadline)
-
-                Text(
-                    "VÁLIDO ATÉ: \(CouponComponent.dateFormatter.string(from: coupon.expiration_date))"
-                )
-                .font(.footnote)
-            }
-
+//            HStack {
+                
+//                Circle()
+//                    .foregroundStyle(Color.green)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(coupon.name)
+                        .font(.headline)
+                        .foregroundStyle(.greenHighlight)
+                    Text("\(Int(coupon.price_points)) pontos")
+                        .font(.subheadline)
+                    
+                    Text(
+                        "VÁLIDO ATÉ: \(CouponComponent.dateFormatter.string(from: coupon.expiration_date))"
+                    )
+                    .font(.footnote)
+                }
+//                Circle()
+//                    .foregroundStyle(Color.green)
+//            }
+            
+            
             Spacer()
         }
         .padding(12)
         .background(
             LinearGradient(
-                gradient: Gradient(colors: [.white.opacity(0.4), .greenGradient.opacity(0.3), .greenGradient.opacity(0.3)]),
+                gradient: Gradient(colors: [Color.black , Color.darkGreenGradient, Color.darkGreenGradient]),
                 startPoint: .leading,
                 endPoint: .trailing
             )

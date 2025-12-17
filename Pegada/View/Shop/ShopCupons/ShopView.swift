@@ -10,7 +10,7 @@ import SwiftData
 
 struct ShopView: View {
     let currentUserId: UUID
-
+    
     @StateObject var viewModel : ShopViewModel
     
     init(currentUserId: UUID, modelContext: ModelContext, userService : UserService) {
@@ -22,8 +22,9 @@ struct ShopView: View {
         ))
     }
     
-
+    
     var body: some View {
+        
         NavigationStack {
             ZStack{
                 Color .headerDark
