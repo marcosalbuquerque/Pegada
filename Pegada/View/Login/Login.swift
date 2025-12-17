@@ -45,6 +45,8 @@ struct Login: View {
 
             appState.profile = profile
             appState.isAuthenticated = true
+            appState.currentUserId = profile.id
+            
 
         } catch {
             vm.errorMessage = error.localizedDescription

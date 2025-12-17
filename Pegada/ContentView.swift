@@ -22,10 +22,10 @@ struct ContentView: View {
                         Label("Mapa", systemImage: "map")
                     }
 
-//                ShopView(currentUserId: userId)
-//                    .tabItem {
-//                        Label("Loja", systemImage: "bag")
-//                    }
+                ShopView(currentUserId: userId)
+                    .tabItem {
+                        Label("Loja", systemImage: "bag")
+                    }
             }
 
         } else {
