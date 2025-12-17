@@ -13,4 +13,11 @@ struct UserProfileDTO: Decodable {
     let totalPoints: Int
     let currentPoints: Int
     let totalSafeCarbon: Double
+    let WeeklyHistory: [DailyCarbonDTO]?
+}
+
+struct DailyCarbonDTO: Decodable, Identifiable {
+    var id: String {day}
+    let day: String
+    let value: Double
 }

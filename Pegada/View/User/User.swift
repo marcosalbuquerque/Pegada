@@ -66,6 +66,9 @@ struct User: View {
 
                         // Stats
                         VStack(spacing: 16) {
+                            
+                            CarbonChart(data: profile.WeeklyHistory ?? [], totalSafeCarbon: profile.totalSafeCarbon)
+                            
                             ProfileStatRow(
                                 icon: "star.fill",
                                 title: "Pontos Totais",
@@ -76,12 +79,6 @@ struct User: View {
                                 icon: "bolt.fill",
                                 title: "Pontos Atuais",
                                 value: "\(profile.currentPoints)"
-                            )
-
-                            ProfileStatRow(
-                                icon: "leaf.fill",
-                                title: "Carbono Evitado",
-                                value: "\(profile.totalSafeCarbon) kg"
                             )
                         }
 
