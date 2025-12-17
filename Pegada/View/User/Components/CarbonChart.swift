@@ -9,7 +9,7 @@ import SwiftUI
 import Charts
 
 struct CarbonChart: View {
-    let data: [DailyCarbonDTO]
+    let data: [DailyCarbonEntity]
     @State var totalSafeCarbon: Double
     
     var body: some View {
