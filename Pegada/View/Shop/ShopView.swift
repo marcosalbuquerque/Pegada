@@ -6,16 +6,24 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ShopView: View {
-    // Suponha que você receba o ID do usuário logado de algum lugar
     let currentUserId: UUID
-    @StateObject private var viewModel = ShopViewModel()
+    @StateObject var viewModel : ShopViewModel
+    
+    init(currentUserId: UUID, modelContext: ModelContext, userService : UserService) {
+        self.currentUserId = currentUserId
+        _viewModel = StateObject(wrappedValue: ShopViewModel(
+            userId: currentUserId,
+            modelContext: modelContext,
+            userService: userService
+        ))
+    }
     
     var body: some View {
         NavigationStack {
             VStack {
-                // Header de Saldo
                 if let profile = viewModel.userProfile {
                     CardTotalPoints(profile: profile)
                 }

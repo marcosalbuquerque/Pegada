@@ -46,8 +46,12 @@ struct ContentView: View {
                     MapView()
                         .tabItem { Label("Mapa", systemImage: "map") }
 
-                    ShopView(currentUserId: userId)
-                        .tabItem { Label("Cupons", systemImage: "ticket") }
+                    ShopView(
+                        currentUserId: userId,
+                        modelContext: modelContext,
+                        userService: userService
+                    )
+                    .tabItem { Label("Cupons", systemImage: "ticket") }
 
                     Ranking(currentUserId: userId)
                         .tabItem { Label("Ranking", systemImage: "trophy") }
