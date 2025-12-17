@@ -24,6 +24,10 @@ struct CouponComponent: View {
     var body: some View {
         HStack(spacing: 20) {
             HStack {
+                Circle()
+                    .foregroundStyle(Color.headerDark)
+                    .frame(height: 30)
+                    .offset(x: -30)
                 VStack {
                     if let image = uiImage {
                         Image(uiImage: image)
@@ -41,11 +45,8 @@ struct CouponComponent: View {
                 .padding(.horizontal, 6)
                 Image("DividerImage")
             }
-//            HStack {
-                
-//                Circle()
-//                    .foregroundStyle(Color.green)
-                
+            HStack {
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(coupon.name)
                         .font(.headline)
@@ -58,9 +59,14 @@ struct CouponComponent: View {
                     )
                     .font(.footnote)
                 }
-//                Circle()
-//                    .foregroundStyle(Color.green)
-//            }
+                
+                Circle()
+                    .foregroundStyle(Color.headerDark)
+                    .frame(height: 30)
+                    .offset(x: 65)
+//                    .offset()
+                    
+            }
             
             
             Spacer()
