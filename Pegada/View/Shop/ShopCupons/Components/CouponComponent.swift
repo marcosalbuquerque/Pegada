@@ -43,6 +43,7 @@ struct CouponComponent: View {
                     }
                 }
                 .padding(.horizontal, 6)
+                .padding(.leading, -20)
                 Image("DividerImage")
             }
             HStack {
@@ -63,7 +64,7 @@ struct CouponComponent: View {
                 Circle()
                     .foregroundStyle(Color.headerDark)
                     .frame(height: 30)
-                    .offset(x: 65)
+                    .offset(x: 75)
 //                    .offset()
                     
             }
