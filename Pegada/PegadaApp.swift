@@ -16,6 +16,7 @@ struct PegadaApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(appState)
+                .preferredColorScheme(.dark)
         }
     }
 }

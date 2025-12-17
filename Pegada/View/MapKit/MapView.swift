@@ -13,7 +13,7 @@ struct MapView: View {
     
     @StateObject var locationManager = LocationManager()
     @State var initialStraightLineDistance: CLLocationDistance?
-    private let carbonCalculator = CarbonCalculatorManager()
+    let carbonCalculator = CarbonCalculatorManager()
     
     // Variáveis de Estado acessadas pela Extension
     @State public var camera: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -137,57 +137,6 @@ struct MapView: View {
                 calculateRoute()
             }
         }
-    }
-    
-    // MARK: - Funções internas da View
-    
-    func startNavigation() {
-            // Captura a distância inicial em linha reta para usar de base no progresso
-            if let userLocation = locationManager.userLocation,
-               let destination = selectedDestination {
-                
-                // Cria a location do destino
-                let destCoord = destination.placemark.coordinate
-                let destLocation = CLLocation(latitude: destCoord.latitude, longitude: destCoord.longitude)
-                
-                // Salva a distância inicial (ex: 500m em linha reta)
-                self.initialStraightLineDistance = userLocation.distance(from: destLocation)
-            }
-            
-            withAnimation {
-                isNavigating = true
-                camera = .userLocation(followsHeading: true, fallback: .automatic)
-            }
-        }
-    
-    func stopNavigation() {
-        withAnimation {
-            isNavigating = false
-            if let route {
-                camera = .rect(route.polyline.boundingMapRect)
-            } else {
-                camera = .userLocation(fallback: .automatic)
-            }
-        }
-    }
-    
-    func formatDistance(_ distance: CLLocationDistance) -> String {
-        return distance < 1000
-        ? "\(Int(distance)) m"
-        : String(format: "%.1f km", distance / 1000)
-    }
-    
-    public func finalizeRoute(route: MKRoute) {
-        let result = carbonCalculator.calculateImpact(
-            for: selectedMode,
-            distanceMeters: route.distance
-        )
-        self.tripResult = result
-        
-        // Exemplo de log para debug
-        print("Resultado Final:")
-        print("CO2 Economizado: \(result.carbonSavedGrams) g")
-        print("Pontos Ganhos: \(result.pointsEarned)")
     }
 }
 
