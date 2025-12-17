@@ -8,12 +8,13 @@
 import Foundation
 
 struct Coupon: Identifiable, Decodable {
-    let id: UUID
+    let id: Int
     let description: String
-    let price: Int
+    let price_points: Double
     let expiration_date: Date
-    let loja_id: UUID
+    let store_id: Int
 }
+
 
 struct Store: Decodable {
     let id: UUID

@@ -42,7 +42,7 @@ struct ShopView: View {
                             VStack(alignment: .leading) {
                                 Text(coupon.description)
                                     .font(.headline)
-                                Text("\(coupon.price) pontos")
+                                Text("\(coupon.price_points) pontos")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                             }
@@ -51,7 +51,7 @@ struct ShopView: View {
                                 viewModel.buy(coupon: coupon)
                             }
                             .buttonStyle(.borderedProminent)
-                            .disabled((viewModel.userProfile?.currentPoints ?? 0) < Int64(coupon.price))
+                            .disabled((viewModel.userProfile?.currentPoints ?? 0) < Int64(coupon.price_points))
                         }
                     }
                 }
@@ -59,16 +59,6 @@ struct ShopView: View {
             .navigationTitle("Loja")
             .task {
                 await viewModel.loadData(userId: currentUserId)
-            }
-            .alert("Erro", isPresented: Binding(get: { viewModel.errorMessage != nil }, set: { _ in viewModel.errorMessage = nil })) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(viewModel.errorMessage ?? "")
-            }
-            .alert("Sucesso", isPresented: Binding(get: { viewModel.successMessage != nil }, set: { _ in viewModel.successMessage = nil })) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(viewModel.successMessage ?? "")
             }
         }
     }

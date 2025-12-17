@@ -26,17 +26,38 @@ final class CouponService {
     private let client = SupabaseClientProvider.shared
 
     func fetchCoupons() async throws -> [Coupon] {
-        try await client
+        print("📥 [Supabase] Buscando cupons ativos...")
+
+        let response = try await client
             .from("cupons")
             .select("""
                 id,
                 description,
-                price,
+                price_points,
                 expiration_date,
-                loja_id
+                store_id
             """)
             .eq("is_active", value: true)
             .execute()
-            .value
+
+        print("📦 [Supabase] JSON recebido:")
+        print(String(data: response.data, encoding: .utf8) ?? "JSON inválido")
+
+        let decoder = JSONDecoder()
+
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        decoder.dateDecodingStrategy = .formatted(formatter)
+
+        let coupons = try decoder.decode([Coupon].self, from: response.data)
+
+        print("✅ [Supabase] Cupons decodificados:", coupons.count)
+
+        return coupons
     }
+
 }
