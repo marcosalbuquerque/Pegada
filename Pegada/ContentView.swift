@@ -38,6 +38,10 @@ struct ContentView: View {
             if appState.isAuthenticated,
                let userId = appState.currentUserId {
 
+                let userService = UserService(
+                    baseURL: "https://pegada-backend-production.up.railway.app/api"
+                )
+
                 TabView {
                     MapView()
                         .tabItem { Label("Mapa", systemImage: "map") }
@@ -48,13 +52,15 @@ struct ContentView: View {
                     Ranking(currentUserId: userId)
                         .tabItem { Label("Ranking", systemImage: "trophy") }
 
-                    User(currentUserId: userId.uuidString)
-                        .tabItem { Label("Perfil", systemImage: "person.fill") }
+                    User(
+                        currentUserId: userId,
+                        modelContext: modelContext,
+                        userService: userService
+                    )
+                    .tabItem { Label("Perfil", systemImage: "person.fill") }
                 }
 
             } else {
-
-                // 🔥 Injeção correta aqui
                 Login(
                     viewModel: LoginViewModel(
                         modelContext: modelContext

@@ -35,3 +35,22 @@ final class ProfileStore {
         try context.save()
     }
 }
+
+extension ProfileStore {
+
+    func updateName(userId: UUID, name: String?) throws {
+
+        let descriptor = FetchDescriptor<ProfileEntity>(
+            predicate: #Predicate { $0.id == userId }
+        )
+
+        guard let profile = try context.fetch(descriptor).first else {
+            throw NSError(domain: "ProfileStore", code: 404)
+        }
+
+        profile.name = name
+        profile.updatedAt = .now
+
+        try context.save()
+    }
+}

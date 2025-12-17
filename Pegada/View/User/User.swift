@@ -7,8 +7,7 @@
 
 
 import SwiftUI
-
-import SwiftUI
+import SwiftData
 
 struct User: View {
 
@@ -20,15 +19,12 @@ struct User: View {
     @State private var isEditing: Bool = false
 
     // MARK: - Init
-    init(currentUserId: String) {
-        let service = UserService(
-            baseURL: "https://pegada-backend-production.up.railway.app/api"
-        )
-
+    init(currentUserId: UUID, modelContext: ModelContext, userService: UserService) {
         _vm = StateObject(
             wrappedValue: UserViewModel(
-                userService: service,
-                userId: currentUserId
+                modelContext: modelContext,
+                userId: currentUserId,
+                userService: userService
             )
         )
     }
@@ -45,7 +41,7 @@ struct User: View {
                                 .fill(Color.green.opacity(0.3))
                                 .frame(width: 100, height: 100)
                                 .overlay(
-                                    Text(initials(from: profile.name))
+                                    Text(initials(from: profile.name ?? ""))
                                         .font(.largeTitle.bold())
                                         .foregroundColor(.green)
                                 )
@@ -55,11 +51,11 @@ struct User: View {
                                     .textFieldStyle(.roundedBorder)
                                     .multilineTextAlignment(.center)
                             } else {
-                                Text(profile.name)
+                                Text(profile.name ?? "")
                                     .font(.title2.bold())
                             }
 
-                            Text(profile.email)
+                            Text(profile.email ?? "")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -89,10 +85,12 @@ struct User: View {
                         VStack(spacing: 12) {
                             Button {
                                 if isEditing {
-                                    vm.updateUserName(editedName)
-                                    isEditing = false
+                                    Task {
+                                        await vm.updateUserName(editedName)
+                                        isEditing = false
+                                    }
                                 } else {
-                                    editedName = profile.name
+                                    editedName = profile.name ?? ""
                                     isEditing = true
                                 }
                             } label: {
@@ -146,5 +144,3 @@ struct User: View {
         return "\(first)\(last)"
     }
 }
-
-
