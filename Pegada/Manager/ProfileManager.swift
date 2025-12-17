@@ -12,9 +12,21 @@ import Foundation
 final class ProfileStore {
 
     private let context: ModelContext
+    private var actualProfile : ProfileEntity?
+    
+    
 
     init(context: ModelContext) {
         self.context = context
+        let descriptor = FetchDescriptor<ProfileEntity>()
+        
+        self.actualProfile = nil
+        
+        do {
+            actualProfile = try context.fetch(descriptor).first
+        } catch {
+            print(error)
+        }
     }
 
     func save(profile: Profile) throws {
@@ -27,6 +39,21 @@ final class ProfileStore {
         let descriptor = FetchDescriptor<ProfileEntity>()
         return try context.fetch(descriptor).first
     }
+    
+    func fetchLastSevenCarbonsMetrics() -> [DailyCarbonEntity] {
+        guard let history = actualProfile?.WeeklyHistory, !history.isEmpty else {
+            return []
+        }
+        
+        let sortedHistory = history.sorted { first, second in
+            guard let firstDate = ISO8601DateFormatter().date(from: first.day),
+                  let secondDate = ISO8601DateFormatter().date(from: second.day) else {
+                return false
+            }
+            return firstDate > secondDate
+        }
+        return Array(sortedHistory.prefix(7))
+    }
 
     func deleteAll() throws {
         let descriptor = FetchDescriptor<ProfileEntity>()
@@ -35,6 +62,24 @@ final class ProfileStore {
         try context.save()
     }
     
+    func decrementPoints(pointsToDecrement: Int) throws {
+        do {
+            actualProfile?.currentPoints = (actualProfile?.currentPoints ?? 0) - Int64(pointsToDecrement)
+        }
+    }
+    
+    func incrementPoints(pointsToIncrement : Int) throws {
+        do {
+            actualProfile?.currentPoints = (actualProfile?.currentPoints ?? 0) + Int64(pointsToIncrement)
+        }
+    }
+    
+    func incrementCarbonStep(quantity: Double) throws {
+        do {
+            actualProfile?.totalSafeCarbon += quantity
+            carbonDaily.value += quantity
+        }
+    }
     func sincWithApi(profile: UserProfileDTO) {
             do {
                 guard let actualProfile = try fetchCurrentProfile() else {
@@ -75,3 +120,57 @@ extension ProfileStore {
         try context.save()
     }
 }
+
+
+extension ProfileStore {
+    // MARK: - Carbon diário
+    var carbonDaily: DailyCarbonEntity {
+        get {
+            guard let profile = actualProfile else {
+                fatalError("❌ Perfil não inicializado")
+            }
+
+            let todayString = ISO8601DateFormatter().string(from: .now).prefix(10)
+
+            if let daily = profile.WeeklyHistory?.first(where: { $0.day.hasPrefix(todayString) }) {
+                return daily
+            } else {
+                let newDaily = DailyCarbonEntity(day: String(todayString), value: 0)
+                if profile.WeeklyHistory == nil {
+                    profile.WeeklyHistory = []
+                }
+                profile.WeeklyHistory?.append(newDaily)
+                
+                do {
+                    try context.save()
+                    print("✅ Criada nova entrada diária para hoje")
+                } catch {
+                    print("❌ Erro ao salvar entrada diária:", error)
+                }
+
+                return newDaily
+            }
+        }
+        set {
+            guard let profile = actualProfile else { return }
+
+            let todayString = ISO8601DateFormatter().string(from: .now).prefix(10)
+
+            if let index = profile.WeeklyHistory?.firstIndex(where: { $0.day.hasPrefix(todayString) }) {
+                profile.WeeklyHistory?[index] = newValue
+            } else {
+                if profile.WeeklyHistory == nil {
+                    profile.WeeklyHistory = []
+                }
+                profile.WeeklyHistory?.append(newValue)
+            }
+
+            do {
+                try context.save()
+            } catch {
+                print("❌ Erro ao atualizar entrada diária:", error)
+            }
+        }
+    }
+}
+
