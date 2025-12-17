@@ -8,29 +8,39 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import SwiftData // <--- IMPORTANTE: Adicionar
 
 struct MapView: View {
+    
+    // --- ADICIONADO: Contexto do Banco de Dados ---
+    @Environment(\.modelContext) var modelContext
     
     @StateObject var locationManager = LocationManager()
     @State var initialStraightLineDistance: CLLocationDistance?
     let carbonCalculator = CarbonCalculatorManager()
     
-    // Variáveis de Estado acessadas pela Extension
+    // Variáveis de Estado
     @State public var camera: MapCameraPosition = .userLocation(fallback: .automatic)
     @State public var searchText = ""
     @State public var selectedDestination: MKMapItem?
     @State public var route: MKRoute?
     @State public var routeErrorMessage: String?
-    @State public var selectedMode: TransportMode = .aPe // Certifique-se que o enum tem case .aPe
+    @State public var selectedMode: TransportMode = .aPe
     @State public var isNavigating: Bool = false
+    
     @State public var tripResult: TripResult? = nil
+    
+    // Estados Uber/Speed
+    @State public var startTime: Date?
+    @State public var showSuccessAlert = false
+    @State public var showSpeedLimitAlert = false
+    @State public var finalStats: (points: Int, carbon: Double)?
     
     var body: some View {
         ZStack(alignment: .top) {
             
             // MAPA
             Map(position: $camera, selection: $selectedDestination) {
-                
                 UserAnnotation()
                 
                 if !isNavigating {
@@ -48,7 +58,6 @@ struct MapView: View {
                         .stroke(.blue, lineWidth: 5)
                 }
             }
-            // CONTROLES DO MAPA
             .mapControls {
                 if !isNavigating {
                     MapUserLocationButton()
@@ -59,22 +68,23 @@ struct MapView: View {
             .onAppear {
                 locationManager.requestLocationPermission()
             }
+            .onChange(of: locationManager.userLocation) {
+                if isNavigating {
+                    updateNavigationLogic()
+                }
+            }
             
-            // OVERLAY SUPERIOR (Busca e Filtro)
+            // OVERLAY SUPERIOR
             .safeAreaInset(edge: .top) {
                 if !isNavigating {
                     VStack(spacing: 12) {
-                        
                         HStack {
                             Image(systemName: "magnifyingglass")
-                            
                             TextField("Pesquisar local...", text: $searchText)
                                 .onSubmit { performSearch() }
                             
                             if !searchText.isEmpty {
-                                Button("", systemImage: "xmark.circle.fill") {
-                                    clearRoute()
-                                }
+                                Button("", systemImage: "xmark.circle.fill") { clearRoute() }
                             }
                         }
                         .padding()
@@ -90,9 +100,7 @@ struct MapView: View {
                         .background(.ultraThinMaterial)
                         .cornerRadius(8)
                         .onChange(of: selectedMode) {
-                            if selectedDestination != nil {
-                                calculateRoute()
-                            }
+                            if selectedDestination != nil { calculateRoute() }
                         }
                     }
                     .padding()
@@ -101,22 +109,15 @@ struct MapView: View {
             
             .safeAreaInset(edge: .bottom) {
                 if isNavigating, let route = route, let result = tripResult {
-                    
-                    // --- MODO: NAVEGAÇÃO ATIVA ---
-                    // Usamos o componente separado aqui
                     NavigationStatusView(
                         destinationName: selectedDestination?.name ?? "Destino",
                         route: route,
                         tripResult: result,
-                        currentProgress: getCurrentProgress(), // Função auxiliar que calcula %
+                        currentProgress: getCurrentProgress(),
                         formatDistance: formatDistance,
-                        onStop: stopNavigation
+                        onStop: handleManualCancellation
                     )
-                    
                 } else if let route = route, let result = tripResult {
-                    
-                    // --- MODO: PREVIEW DA ROTA ---
-                    // Se a RouteInfoBar já mostra os resultados, não precisa repetir o TripResultBar
                     VStack(spacing: 0) {
                         RouteInfoBar(
                             route: route,
@@ -126,20 +127,30 @@ struct MapView: View {
                             result: result
                         )
                     }
-                    
                 } else if let message = routeErrorMessage {
                     NoRouteInfoBar(message: message)
                 }
             }
         }
         .onChange(of: selectedDestination) {
-            if selectedDestination != nil {
-                calculateRoute()
+            if selectedDestination != nil { calculateRoute() }
+        }
+        .alert("Viagem Finalizada", isPresented: $showSuccessAlert) {
+            Button("OK") {
+                stopNavigation()
+                
+            }
+        } message: {
+            if let stats = finalStats {
+                Text("Resumo da rota:\n+ \(stats.points) Pontos\nCarbono evitado: \(Int(stats.carbon))g")
             }
         }
+        .alert("Viagem Cancelada", isPresented: $showSpeedLimitAlert) {
+            Button("Entendi") {
+                stopNavigation()
+            }
+        } message: {
+            Text("Detectamos uma velocidade muito alta para o modo \(selectedMode.rawValue). A viagem foi invalidada.")
+        }
     }
-}
-
-#Preview {
-    MapView()
 }

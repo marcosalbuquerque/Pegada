@@ -5,13 +5,16 @@
 //  Created by João Felipe Schwaab on 17/12/25.
 //
 
-
 import SwiftUI
 import SwiftData
 
 struct User: View {
 
-    // MARK: - ViewModel
+    // MARK: - SwiftData Query (Isso garante a atualização automática)
+    // Busca o perfil armazenado localmente.
+    @Query private var profiles: [ProfileEntity]
+    
+    // ViewModel apenas para ações (editar, etc)
     @StateObject private var vm: UserViewModel
 
     // MARK: - Local State
@@ -32,12 +35,13 @@ struct User: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                ZStack{
+                ZStack {
                     Divider()
                     RoundedRectangle(cornerRadius: 0)
                         .fill(Color.backGroundPerfil)
                     
-                    if let profile = vm.profile {
+                    // Pega o primeiro perfil encontrado no banco (assumindo apenas um usuário logado)
+                    if let profile = profiles.first {
                         VStack(spacing: 24) {
 
                             // Avatar
@@ -68,8 +72,11 @@ struct User: View {
                             // Stats
                             VStack(spacing: 16) {
                                 
-                                //TODO: Pegar os dados corretamente pela viewModel
-                                CarbonChart(data: [], totalSafeCarbon: profile.totalSafeCarbon)
+                                // CORREÇÃO: Passando os dados reais do histórico para o gráfico
+                                CarbonChart(
+                                    data: profile.WeeklyHistory ?? [],
+                                    totalSafeCarbon: profile.totalSafeCarbon
+                                )
                                 
                                 ProfileStatRow(
                                     icon: "star.fill",
@@ -119,11 +126,16 @@ struct User: View {
                             }
                         }
                         .padding()
+                    } else {
+                        // Caso não tenha perfil carregado ainda
+                        ContentUnavailableView("Nenhum Perfil", systemImage: "person.slash")
                     }
 
                     if vm.isLoading {
-                        ProgressView("Carregando perfil...")
+                        ProgressView("Processando...")
                             .padding()
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(10)
                     }
 
                     if let error = vm.errorMessage {
@@ -132,12 +144,9 @@ struct User: View {
                             .padding()
                     }
                 }
-                
             }
             .navigationTitle("Perfil")
-            .onAppear {
-                vm.loadUserProfile()
-            }
+            // Não precisamos mais do onAppear para carregar, o @Query faz isso sozinho.
         }
     }
 
