@@ -27,6 +27,7 @@ struct PegadaApp: App {
                     let store = ProfileStore(context: container.mainContext)
                     appState.restoreSession(profileStore: store)
                 }
+                .preferredColorScheme(.dark)
         }
     }
 }

@@ -63,6 +63,7 @@ struct ContentView: View {
                     )
                     .tabItem { Label("Perfil", systemImage: "person.fill") }
                 }
+                .tint(Color.greenHighlight)
 
             } else {
                 Login(
