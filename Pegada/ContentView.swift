@@ -64,6 +64,20 @@ struct ContentView: View {
                     .tabItem { Label("Perfil", systemImage: "person.fill") }
                 }
                 .tint(Color.greenHighlight)
+                .onAppear {
+                                    userService.fetchUserProfile(userId: userId.uuidString) { result in
+                                        switch result {
+                                            case .success(let remoteProfile):
+                                            Task { @MainActor in
+                                                let profileStore = ProfileStore(context: modelContext)
+                                                profileStore.sincWithApi(profile: remoteProfile)
+                                            }
+
+                                        case .failure(let error):
+                                            print("ERRO AO BUSCAR PERFIL REMOTO:", error)
+                                        }
+                                    }
+                                }
 
             } else {
                 Login(
