@@ -26,7 +26,7 @@ struct CardTotalPoints: View {
             Spacer()
         }
         .padding()
-        .background(Color(.systemGray4))
+        .background(Color(.backGroundIcon))
         .cornerRadius(12)
         .padding()
 
