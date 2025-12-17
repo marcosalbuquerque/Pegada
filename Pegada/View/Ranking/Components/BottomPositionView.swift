@@ -5,6 +5,7 @@
 //  Created by João Felipe Schwaab on 17/12/25.
 //
 
+import SwiftUI
 
 struct BottomPositionView: View {
 
