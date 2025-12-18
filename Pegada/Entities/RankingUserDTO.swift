@@ -10,4 +10,5 @@ struct RankingUserDTO: Identifiable, Decodable {
     let id: String
     let name: String
     let totalSafeCarbon: Double
+    let img_url: String?
 }

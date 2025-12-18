@@ -13,6 +13,7 @@ struct RankingUser: Identifiable {
     let name: String
     let points: Double
     let userId: UUID
+    let img_url: String
 
     var initials: String {
         let components = name.split(separator: " ")

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RankingRow: View {
+    @State private var uiImage: UIImage? = nil
     let user: RankingUser
     let isCurrentUser: Bool
     let backgroundColor: Color
@@ -20,9 +21,24 @@ struct RankingRow: View {
                 .foregroundColor(.darkGreenGradient)
                 .frame(width: 30)
             
+          
             Circle()
-                .fill(Color.podiumBackground)
-                .frame(width: 40, height: 40)
+                   .fill(Color.podiumBackground)
+                   .frame(width: 40, height: 40)
+                   .overlay {
+
+                       if let image = uiImage {
+                           Image(uiImage: image)
+                               .resizable()
+                               .scaledToFill()
+                               .frame(width: 40, height: 40)
+                               .clipShape(Circle())
+                       } else {
+                           Color.yellow.opacity(0.4)
+                               .clipShape(Circle())
+                       }
+                   }
+                   
             
             Text(user.name)
                 .font(.headline)
@@ -52,7 +68,12 @@ struct RankingRow: View {
             RoundedRectangle(cornerRadius: 15)
                 .stroke(isCurrentUser ? Color.greenHighlight : Color.clear, lineWidth: 1)
         )
-        .padding(.horizontal) 
+        .padding(.horizontal)
+        .onAppear {
+            Task {
+                uiImage = await loadUiImage(url: user.img_url)
+            }
+        }
     }
 }
 
