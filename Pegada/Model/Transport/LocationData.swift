@@ -27,7 +27,7 @@ struct LocationItem: Identifiable {
         LocationItem(name: "Navalha da Corte", coordinate: CLLocationCoordinate2D(latitude: -15.798010260698556, longitude: -47.887794739172534), icon: .asset(.navalhaDaCorte)),
         LocationItem(name: "Espelunca", coordinate: CLLocationCoordinate2D(latitude: -15.799212608596351, longitude: -47.88659114627791), icon: .asset(.espelunca)),
         LocationItem(name: "ProOffices", coordinate: CLLocationCoordinate2D(latitude: -15.796073387691845, longitude: -47.89030007936166), icon: .asset(.proOffices)),
-        LocationItem(name: "Nicolandia", coordinate: CLLocationCoordinate2D(latitude: -15.794217661944678, longitude: -47.8986015039493), icon: .asset(.proOffices))
+        LocationItem(name: "Nicolandia", coordinate: CLLocationCoordinate2D(latitude: -15.794217661944678, longitude: -47.8986015039493), icon: .asset(.nicolandia))
 
         
     ]
