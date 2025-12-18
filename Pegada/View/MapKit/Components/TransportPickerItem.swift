@@ -36,7 +36,7 @@ struct TransportModeItem: View {
             }
             .overlay(
                 Capsule()
-                    .stroke(Color.greenHighlight, lineWidth: 1)
+                    .stroke(Color.greenHighlight, lineWidth: 0.5)
             )
         }
         .buttonStyle(.plain)
