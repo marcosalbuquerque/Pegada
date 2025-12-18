@@ -14,18 +14,21 @@ enum IconType {
     case asset(ImageResource)
 }
 
+
 struct LocationItem: Identifiable {
     let id = UUID()
     let name: String
     let coordinate: CLLocationCoordinate2D
     let icon: IconType
     
+    
     static let allLocations: [LocationItem] = [
         LocationItem(name: "Setor Comercial Sul", coordinate: CLLocationCoordinate2D(latitude: -15.79834, longitude: -47.8865), icon: .asset(.scs)),
-        LocationItem(name: "Asa Norte, Quadra 702", coordinate: CLLocationCoordinate2D(latitude: -15.782179, longitude: -47.889442), icon: .system("building.2")),
-        LocationItem(name: "Asa Norte, Quadra 706", coordinate: CLLocationCoordinate2D(latitude: -15.770412, longitude: -47.889902), icon: .system("building.2")),
-        LocationItem(name: "Asa Norte, Quadra 715", coordinate: CLLocationCoordinate2D(latitude: -15.743184, longitude: -47.898986), icon: .system("building.2")),
-        LocationItem(name: "Asa Norte, Quadra 716", coordinate: CLLocationCoordinate2D(latitude: -15.740174, longitude: -47.900063), icon: .system("building.2")),
-        LocationItem(name: "Vila Planalto", coordinate: CLLocationCoordinate2D(latitude: -15.793300, longitude: -47.849970), icon: .asset(.vila))
+        LocationItem(name: "Navalha da Corte", coordinate: CLLocationCoordinate2D(latitude: -15.798010260698556, longitude: -47.887794739172534), icon: .asset(.navalhaDaCorte)),
+        LocationItem(name: "Espelunca", coordinate: CLLocationCoordinate2D(latitude: -15.799212608596351, longitude: -47.88659114627791), icon: .asset(.espelunca)),
+        LocationItem(name: "ProOffices", coordinate: CLLocationCoordinate2D(latitude: -15.796073387691845, longitude: -47.89030007936166), icon: .asset(.proOffices)),
+        LocationItem(name: "Nicolandia", coordinate: CLLocationCoordinate2D(latitude: -15.794217661944678, longitude: -47.8986015039493), icon: .asset(.nicolandia))
+
+        
     ]
 }

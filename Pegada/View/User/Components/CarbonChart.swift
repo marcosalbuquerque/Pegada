@@ -45,7 +45,7 @@ struct CarbonChart: View {
                                 .foregroundColor(Color.greenHighlight)
                         }
                         Spacer()
-                        Text("\(String(format: "%.2f kg", totalSafeCarbon))")
+                        Text("\(String(format: "%.2f g", totalSafeCarbon))")
                             .font(.title3.bold())
                             .foregroundColor(Color.allWhite)
                         
