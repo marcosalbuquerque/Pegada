@@ -147,7 +147,7 @@ final class ProfileStore {
                 print("Erro ao sincronizar perfil:", error)
             }
         }
-    }
+    
 }
 
 // Extensão necessária para o ViewModel
