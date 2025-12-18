@@ -52,7 +52,8 @@ final class RankingViewModel: ObservableObject {
                 position: index + 1,
                 name: user.name,
                 points: user.totalSafeCarbon,
-                userId: uuid
+                userId: uuid,
+                img_url: user.img_url ?? ""
             )
         }
 

@@ -36,8 +36,7 @@ final class CouponService {
             .eq("is_active", value: true)
             .execute()
 
-        print("📦 [Supabase] JSON recebido:")
-        print(String(data: response.data, encoding: .utf8) ?? "JSON inválido")
+        
 
         let decoder = JSONDecoder()
 
