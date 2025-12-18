@@ -45,11 +45,13 @@ final class RankingViewModel: ObservableObject {
                 print("❌ UUID inválido:", user.id)
                 return nil
             }
+            
+            print("Olha que bacana: \(uuid)")
 
             return RankingUser(
                 position: index + 1,
                 name: user.name,
-                points: user.totalPoints,
+                points: user.totalSafeCarbon,
                 userId: uuid
             )
         }

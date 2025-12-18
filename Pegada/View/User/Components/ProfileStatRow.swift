@@ -14,22 +14,26 @@ struct ProfileStatRow: View {
     let value: String
 
     var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .foregroundColor(.green)
-                .frame(width: 24)
+        VStack(alignment: .leading) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .foregroundColor(Color.greenHighlight)
+                    .frame(width: 24)
 
-            Text(title)
-                .font(.headline)
-
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(Color.greenHighlight)
+            }
             Spacer()
-
             Text(value)
-                .font(.headline)
-                .foregroundColor(.secondary)
+                .font(.title3.bold())
+                .foregroundColor(Color.allWhite)
+            
+            
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color.backGroundIcon)
         .cornerRadius(12)
     }
 }

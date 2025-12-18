@@ -1,17 +1,12 @@
-//
-//  ContentView.swift
-//  Pegada
-//
-//  Created by Marcos Albuquerque on 16/12/25.
-//
-
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+
+    @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
     @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = true
-    
-    // Definição dos dados do Onboarding
+
     let onboardingData: [OnboardingItem] = [
         OnboardingItem(
             title: "Bem-vindo ao Pegada",
@@ -27,48 +22,70 @@ struct ContentView: View {
             title: "Privacidade Total",
             description: "Seus dados de localização ficam apenas no seu dispositivo.",
             icon: "lock.shield.fill"
-        )
+        ),
     ]
 
     var body: some View {
         if !hasSeenOnboarding {
-            // Chama o componente passando os dados e o binding
-            OnboardingView(items: onboardingData, isCompleted: $hasSeenOnboarding)
-                .transition(.opacity)
+
+            OnboardingView(
+                items: onboardingData,
+                isCompleted: $hasSeenOnboarding
+            )
+
         } else {
+
             if appState.isAuthenticated,
-           let userId = appState.currentUserId {
+               let userId = appState.currentUserId {
 
-            TabView {
+                let userService = UserService(
+                    baseURL: "https://pegada-backend-production.up.railway.app/api"
+                )
 
-                   MapView()
-                    .tabItem {
-                        Label("Mapa", systemImage: "map")
-                    }
+                TabView {
+                    MapView()
+                        .tabItem { Label("Mapa", systemImage: "map") }
 
-                ShopView(currentUserId: userId)
-                    .tabItem {
-                        Label("Loja", systemImage: "bag")
-                    }
-                Ranking(currentUserId: userId)
-                    .tabItem {
-                        Label("Ranking", systemImage: "trophy")
-                    }
-                User(currentUserId: userId.uuidString)
-                    .tabItem {
-                        Label("Perfil", systemImage: "person.fill")
-                    }
-                
-            }
+                    ShopView(
+                        currentUserId: userId,
+                        modelContext: modelContext,
+                        userService: userService
+                    )
+                    .tabItem { Label("Cupons", systemImage: "ticket") }
 
-//                SharingView()
+                    Ranking(currentUserId: userId)
+                        .tabItem { Label("Ranking", systemImage: "trophy") }
+
+                    User(
+                        currentUserId: userId,
+                        modelContext: modelContext,
+                        userService: userService
+                    )
+                    .tabItem { Label("Perfil", systemImage: "person.fill") }
+                }
+                .tint(Color.greenHighlight)
+                .onAppear {
+                                    userService.fetchUserProfile(userId: userId.uuidString) { result in
+                                        switch result {
+                                            case .success(let remoteProfile):
+                                            Task { @MainActor in
+                                                let profileStore = ProfileStore(context: modelContext)
+                                                profileStore.sincWithApi(profile: remoteProfile)
+                                            }
+
+                                        case .failure(let error):
+                                            print("ERRO AO BUSCAR PERFIL REMOTO:", error)
+                                        }
+                                    }
+                                }
+
             } else {
-                Login()
+                Login(
+                    viewModel: LoginViewModel(
+                        modelContext: modelContext
+                    )
+                )
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
 }

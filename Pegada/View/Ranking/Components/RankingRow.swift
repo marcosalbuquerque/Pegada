@@ -8,71 +8,51 @@
 import SwiftUI
 
 struct RankingRow: View {
-
     let user: RankingUser
     let isCurrentUser: Bool
-
+    let backgroundColor: Color
+    
     var body: some View {
-        HStack(spacing: 16) {
-
+        HStack {
+            
             Text("\(user.position)")
                 .font(.headline)
+                .foregroundColor(.darkGreenGradient)
                 .frame(width: 30)
-                .foregroundColor(positionColor)
-
+            
             Circle()
-                .fill(isCurrentUser ? Color.green : Color.gray.opacity(0.3))
-                .frame(width: 44, height: 44)
-                .overlay(
-                    Text(user.initials)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                )
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(user.name)
-                    .font(.headline)
-                    .foregroundColor(isCurrentUser ? .green : .primary)
-
-                Text("\(user.points) pontos")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
+                .fill(Color.podiumBackground)
+                .frame(width: 40, height: 40)
+            
+            Text(user.name)
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding(.leading, 4)
+            
             Spacer()
-
-            if user.position <= 3 {
-                Image(systemName: medalIcon)
-                    .font(.title2)
-                    .foregroundColor(positionColor)
+            
+            HStack(spacing: 4) {
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(Color.greenHighlight)
+                    .font(.caption)
+                
+                Text("\(user.points, specifier: "%.2f")")
+                    .font(.subheadline)
+                    .bold()
+                    .padding(.trailing, 14)
+                    .padding(.leading, 8)
+                    .foregroundColor(Color.greenHighlight)
             }
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(isCurrentUser ? Color.green.opacity(0.12) : Color.clear)
-        )
+        .frame(maxWidth: .infinity, maxHeight: 30)
+        .padding()
+        .background(backgroundColor)
+        .cornerRadius(15)
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(isCurrentUser ? Color.green : Color.clear, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 15)
+                .stroke(isCurrentUser ? Color.greenHighlight : Color.clear, lineWidth: 1)
         )
-    }
-
-    private var positionColor: Color {
-        switch user.position {
-        case 1: return .yellow
-        case 2: return .gray
-        case 3: return .orange
-        default: return .primary
-        }
-    }
-
-    private var medalIcon: String {
-        switch user.position {
-        case 1: return "crown.fill"
-        case 2, 3: return "medal.fill"
-        default: return ""
-        }
+        .padding(.horizontal) 
     }
 }
+

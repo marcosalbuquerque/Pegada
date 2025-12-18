@@ -11,7 +11,7 @@ struct RankingUser: Identifiable {
     let id = UUID()
     let position: Int
     let name: String
-    let points: Int
+    let points: Double
     let userId: UUID
 
     var initials: String {
