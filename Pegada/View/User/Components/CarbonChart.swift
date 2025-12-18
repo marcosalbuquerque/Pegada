@@ -34,11 +34,26 @@ struct CarbonChart: View {
                     
                 // Mesmo sem gráfico, mostra o total acumulado se for maior que zero
                 if totalSafeCarbon > 0 {
-                    ProfileStatRow(
-                        icon: "leaf.fill",
-                        title: "Total Acumulado",
-                        value: String(format: "%.2f kg", totalSafeCarbon)
-                    )
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "leaf.fill")
+                                .foregroundColor(Color.greenHighlight)
+                                .frame(width: 24)
+
+                            Text("Total Acumulado")
+                                .font(.headline)
+                                .foregroundColor(Color.greenHighlight)
+                        }
+                        Spacer()
+                        Text("\(String(format: "%.2f kg", totalSafeCarbon))")
+                            .font(.title3.bold())
+                            .foregroundColor(Color.allWhite)
+                        
+                        
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.backGroundIcon)
+                    .cornerRadius(12)
                 }
             } else {
                 ProfileStatRow(

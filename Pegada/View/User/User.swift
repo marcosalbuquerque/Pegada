@@ -123,8 +123,9 @@ struct User: View {
                                         Text(isEditing ? "Salvar Perfil" : "Editar Perfil")
                                             .frame(maxWidth: .infinity)
                                             .padding()
-                                            .background(Color.green)
-                                            .foregroundColor(.white)
+                                            .font(.headline)
+                                            .foregroundStyle(Color.black)
+                                            .background(.greenHighlight)
                                             .cornerRadius(12)
                                     }
                                     .disabled(vm.isLoading)

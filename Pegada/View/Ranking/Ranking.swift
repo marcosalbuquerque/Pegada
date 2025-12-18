@@ -58,12 +58,6 @@ struct Ranking: View {
                     }
                 }
                 
-                if let position = vm.currentUserPosition {
-                    VStack {
-                        Spacer()
-                        BottomPositionView(position: position)
-                    }
-                }
             }
             .navigationTitle("Ranking")
             .navigationBarTitleDisplayMode(.large)

@@ -75,7 +75,7 @@ struct CouponComponent: View {
         .padding(12)
         .background(
             LinearGradient(
-                gradient: Gradient(colors: [Color.black , Color.darkGreenGradient, Color.darkGreenGradient]),
+                gradient: Gradient(colors: [Color.black , Color.greenGradient, Color.greenGradient]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
