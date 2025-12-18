@@ -5,26 +5,25 @@ struct ContentView: View {
 
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
-    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = true
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
 
     let onboardingData: [OnboardingItem] = [
         OnboardingItem(
-            title: "Bem-vindo ao Pegada",
-            description: "Acompanhe seus passos e descubra novos caminhos todos os dias.",
-            icon: "map.fill"
+            title: "O Mundo em Equilíbrio",
+            description: "Cada viagem conta. Descubra como seus trajetos impactam o planeta e assuma o controle da sua pegada de carbono.",
+            icon: "globe.americas.fill"
         ),
         OnboardingItem(
-            title: "Histórico Detalhado",
-            description: "Visualize seu progresso com gráficos intuitivos e detalhados.",
-            icon: "chart.bar.fill"
+            title: "Rastreamento Inteligente",
+            description: "Acompanhe suas rotas em tempo real e visualize sua economia de CO2. Tecnologia a favor da consciência ambiental.",
+            icon: "location.fill.viewfinder"
         ),
         OnboardingItem(
-            title: "Privacidade Total",
-            description: "Seus dados de localização ficam apenas no seu dispositivo.",
-            icon: "lock.shield.fill"
-        ),
+            title: "Sustentabilidade Recompensada",
+            description: "Transforme escolhas verdes em benefícios reais. Acumule pontos, resgate cupons exclusivos e deixe seu legado.",
+            icon: "leaf.fill"
+        )
     ]
-
     var body: some View {
         if !hasSeenOnboarding {
 

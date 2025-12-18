@@ -5,13 +5,16 @@
 //  Created by João Felipe Schwaab on 17/12/25.
 //
 
-
 import SwiftUI
 import SwiftData
 
 struct User: View {
 
-    // MARK: - ViewModel
+    // MARK: - SwiftData Query (Isso garante a atualização automática)
+    // Busca o perfil armazenado localmente.
+    @Query private var profiles: [ProfileEntity]
+    
+    // ViewModel apenas para ações (editar, etc)
     @StateObject private var vm: UserViewModel
 
     // MARK: - Local State
@@ -156,7 +159,12 @@ struct User: View {
                 }
             }
             .navigationTitle("Perfil")
+            // Dentro de User.swift, no final do NavigationStack ou ZStack:
             .onAppear {
+                vm.loadUserProfile() // Chama a função que busca o perfil no banco local
+            }
+            // E para garantir que a UI atualize quando o @Query mudar:
+            .onChange(of: profiles) {
                 vm.loadUserProfile()
             }
         }

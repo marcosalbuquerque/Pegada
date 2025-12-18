@@ -10,13 +10,14 @@ import Charts
 
 struct CarbonChart: View {
     let data: [DailyCarbonEntity]
-    @State var totalSafeCarbon: Double
+    
+    let totalSafeCarbon: Double
     
     var body: some View {
         VStack(alignment: .leading){
             HStack(spacing: 8) {
                     Image(systemName: "leaf.fill")
-                        .foregroundColor(Color.greenHighlight) // Aplique a cor no ícone também
+                        .foregroundColor(Color.greenHighlight)
                     Text("Total de Carbono Evitado")
                         .font(.headline)
                         .foregroundColor(Color.greenHighlight)
@@ -24,15 +25,29 @@ struct CarbonChart: View {
             
             Spacer()
             
+            // Se estiver vazio, mostra mensagem, senão mostra o gráfico
             if data.isEmpty {
                 Text("Sem dados recentes")
-                    .font(.title3.bold())
-            }else {
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 8)
+                    
+                // Mesmo sem gráfico, mostra o total acumulado se for maior que zero
+                if totalSafeCarbon > 0 {
+                    ProfileStatRow(
+                        icon: "leaf.fill",
+                        title: "Total Acumulado",
+                        value: String(format: "%.2f kg", totalSafeCarbon)
+                    )
+                }
+            } else {
                 ProfileStatRow(
                     icon: "leaf.fill",
                     title: "Total de Carbono Evitado",
-                    value: "\(totalSafeCarbon) kg"
+                    // Use formatação %.2f para ver casas decimais (ex: 0.05 kg)
+                    value: String(format: "%.2f kg", totalSafeCarbon)
                 )
+                
                 Chart(data) { item in
                     BarMark(
                         x: .value("Dia", item.day),
@@ -41,7 +56,7 @@ struct CarbonChart: View {
                     .foregroundStyle(Color.darkGreenGradient)
                     .cornerRadius(4)
                 }
-                .frame(height: 150) //Altura do grafico
+                .frame(height: 150)
                 .chartYAxis {
                     AxisMarks(position: .leading)
                 }
