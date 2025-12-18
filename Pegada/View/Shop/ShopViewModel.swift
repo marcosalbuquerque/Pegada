@@ -34,12 +34,9 @@ final class ShopViewModel: ObservableObject {
     }
 
     func loadData(userId: UUID) async {
-        print("🔄 [VM] loadData iniciado para user:", userId)
-
         self.isLoading = true
         defer {
             self.isLoading = false
-            print("🔄 [VM] loadData finalizado")
         }
 
         do {
@@ -48,20 +45,16 @@ final class ShopViewModel: ObservableObject {
 
         } catch {
             self.errorMessage = "Erro ao carregar dados"
-            print("❌ [VM] Erro loadData:", error)
+            print("Erro loadData:", error)
         }
     }
 
     func buy(coupon: Coupon) {
-        print("🛒 [VM] Tentativa de compra do cupom:", coupon.id)
-
         guard let profile = userProfile else {
-            print("❌ [VM] Perfil não carregado")
             return
         }
 
         guard profile.currentPoints >= Int64(coupon.price_points) else {
-            print("❌ [VM] Saldo insuficiente")
             self.errorMessage = "Saldo insuficiente"
             return
         }
@@ -71,30 +64,25 @@ final class ShopViewModel: ObservableObject {
             defer { self.isLoading = false }
 
             do {
-                print("🚀 [VM] Chamando API de resgate...")
                 let result = try await transactionService.redeemCoupon(
                     userId: profile.id,
                     couponId: coupon.id
                 )
 
 
-                print("🔁 [VM] Recarregando perfil...")
                 self.userProfile = try self.profileStore.fetchCurrentProfile()
 
 
                 self.successMessage = "Cupom comprado com sucesso"
-                print("✅ [VM] Compra concluída")
-
             } catch {
                 // Mostra a mensagem específica do backend
                 self.errorMessage = error.localizedDescription
-                print("❌ [VM] Erro na compra:", error.localizedDescription)
+                print("Erro na compra:", error.localizedDescription)
             }
         }
     }
 
     private func fetchUserProfile(userId: UUID) async throws -> Profile {
-        print("📥 [Supabase] Buscando perfil:", userId)
 
         let profile: Profile = try await SupabaseClientProvider.shared
             .from("profiles")
@@ -103,8 +91,6 @@ final class ShopViewModel: ObservableObject {
             .single()
             .execute()
             .value
-
-        print("👤 [Supabase] Perfil recebido. Pontos:", profile.currentPoints)
 
         return profile
     }

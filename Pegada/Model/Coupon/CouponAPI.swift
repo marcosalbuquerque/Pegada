@@ -30,8 +30,6 @@ final class CouponAPIService {
     }
 
     func redeemCoupon(userId: UUID, couponId: Int) async throws {
-        print("🚀 [API] Iniciando resgate")
-
         guard let url = URL(string: "\(baseURL)/cuponRedeemed/createCuponRedeemed") else {
             throw APIError.invalidURL
         }
@@ -58,7 +56,6 @@ final class CouponAPIService {
             print(String(data: data, encoding: .utf8) ?? "JSON inválido")
             decoded = try JSONDecoder().decode(RedeemResponse.self, from: data)
         } catch {
-            print("❌ [API] Falha ao decodificar JSON")
             throw APIError.decodingError
         }
 
@@ -70,6 +67,6 @@ final class CouponAPIService {
             )
         }
 
-        print("✅ [API] Cupom resgatado com sucesso:", decoded.cuponRedeemed?.id ?? "")
+        print(" Cupom resgatado com sucesso:", decoded.cuponRedeemed?.id ?? "")
     }
 }

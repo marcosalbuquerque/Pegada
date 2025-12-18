@@ -32,7 +32,7 @@ final class RankingViewModel: ObservableObject {
                 case .success(let users):
                     self.mapRanking(users)
                 case .failure(let error):
-                    print("❌ Erro ranking:", error)
+                    print("Erro ranking:", error)
                 }
             }
         }
@@ -42,11 +42,9 @@ final class RankingViewModel: ObservableObject {
         let mapped = users.enumerated().compactMap { index, user -> RankingUser? in
 
             guard let uuid = UUID(uuidString: user.id) else {
-                print("❌ UUID inválido:", user.id)
+                print("UUID inválido:", user.id)
                 return nil
             }
-            
-            print("Olha que bacana: \(uuid)")
 
             return RankingUser(
                 position: index + 1,

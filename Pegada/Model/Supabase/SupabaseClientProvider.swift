@@ -26,8 +26,6 @@ final class CouponService {
     private let client = SupabaseClientProvider.shared
 
     func fetchCoupons() async throws -> [Coupon] {
-        print("📥 [Supabase] Buscando cupons ativos...")
-
         let response = try await client
             .from("cupons")
             .select("""
@@ -49,9 +47,7 @@ final class CouponService {
         decoder.dateDecodingStrategy = .formatted(formatter)
 
         let coupons = try decoder.decode([Coupon].self, from: response.data)
-
-        print("✅ [Supabase] Cupons decodificados:", coupons.count)
-
+        
         return coupons
     }
 
