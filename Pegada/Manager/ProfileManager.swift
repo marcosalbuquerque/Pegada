@@ -131,18 +131,21 @@ final class ProfileStore {
         }
     }
     func sincWithApi(profile: UserProfileDTO) {
-        do {
-            guard let actualProfile = try fetchCurrentProfile() else { return }
+            do {
+                guard let actualProfile = try fetchCurrentProfile() else {
+                    return
+                }
 
-            actualProfile.name = profile.name
-            actualProfile.email = profile.email
-            actualProfile.currentPoints = Int64(profile.currentPoints)
-            actualProfile.totalPoints = Int64(profile.totalPoints)
-            actualProfile.totalSafeCarbon = profile.totalSafeCarbon
-            
-            try context.save()
-        } catch {
-            print("❌ Erro sync:", error)
+                actualProfile.name = profile.name
+                actualProfile.email = profile.email
+                actualProfile.currentPoints = Int64(profile.currentPoints)
+                actualProfile.totalPoints = Int64(profile.totalPoints)
+                actualProfile.totalSafeCarbon = profile.totalSafeCarbon
+
+                try context.save()
+            } catch {
+                print("Erro ao sincronizar perfil:", error)
+            }
         }
     }
 }
@@ -166,7 +169,7 @@ extension ProfileStore {
     var carbonDaily: DailyCarbonEntity {
         get {
             guard let profile = actualProfile else {
-                fatalError("❌ Perfil não inicializado")
+                fatalError("Perfil não inicializado")
             }
 
             let todayString = ISO8601DateFormatter().string(from: .now).prefix(10)
@@ -182,9 +185,8 @@ extension ProfileStore {
                 
                 do {
                     try context.save()
-                    print("✅ Criada nova entrada diária para hoje")
                 } catch {
-                    print("❌ Erro ao salvar entrada diária:", error)
+                    print("Erro ao salvar entrada diária:", error)
                 }
 
                 return newDaily
@@ -207,7 +209,7 @@ extension ProfileStore {
             do {
                 try context.save()
             } catch {
-                print("❌ Erro ao atualizar entrada diária:", error)
+                print("Erro ao atualizar entrada diária:", error)
             }
         }
     }

@@ -31,7 +31,6 @@ final class UserViewModel: ObservableObject {
             self.profile = try profileStore.fetchCurrentProfile()
         } catch {
             self.errorMessage = "Erro ao carregar perfil local."
-            print("❌ SwiftData error:", error)
         }
     }
     
@@ -56,7 +55,7 @@ final class UserViewModel: ObservableObject {
 
         } catch {
             self.errorMessage = error.localizedDescription
-            print("❌ Erro ao atualizar nome:", error)
+            print("Erro ao atualizar nome:", error)
         }
 
         isLoading = false

@@ -53,6 +53,10 @@ enum TransportMode: String, CaseIterable, Identifiable {
         case .transportePublico: return "onibus"
         }
     }
+    // Imagem escura (para fundo Verde Highlight)
+    var assetNameSelected: String {
+        return "\(assetName)2" // Retorna "pe2", "bike2", etc.
+    }
 
     var icon: String {
         switch self {
