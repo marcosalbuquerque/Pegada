@@ -83,7 +83,7 @@ struct MapView: View {
                         VStack(spacing: 12) {
                             
                             HStack{
-                                Text("\(periodoAtual().texto), Epsilon")
+                                Text("\(periodoAtual().texto), Linda")
                                     .font(.largeTitle)
                                     .bold()
                                 
@@ -109,7 +109,7 @@ struct MapView: View {
                             .cornerRadius(200)
                             .overlay(
                                 Capsule()
-                                    .stroke(Color.greenHighlight, lineWidth: 1.5)
+                                    .stroke(Color.greenHighlight, lineWidth: 0.5)
                                 
                             )
                             
