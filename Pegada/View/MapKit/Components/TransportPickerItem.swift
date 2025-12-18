@@ -14,8 +14,10 @@ struct TransportModeItem: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                Image(systemName: mode.icon)
-                    .font(.system(size: 16, weight: .semibold))
+                Image(isSelected ? mode.assetNameSelected : mode.assetName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
                 
                 Text(mode.rawValue)
                     .font(.system(size: 14, weight: .semibold))
