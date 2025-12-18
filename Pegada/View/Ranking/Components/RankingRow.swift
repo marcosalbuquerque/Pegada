@@ -21,7 +21,7 @@ struct RankingRow: View {
                 .foregroundColor(.darkGreenGradient)
                 .frame(width: 30)
             
-          
+           
             Circle()
                    .fill(Color.podiumBackground)
                    .frame(width: 40, height: 40)

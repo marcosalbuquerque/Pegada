@@ -99,7 +99,7 @@ struct BuyCuponView: View {
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(red: 0.74, green: 0.89, blue: 0.35))
+                            .background(.greenHighlight)
                             .cornerRadius(25)
                     }
                     .padding(.horizontal, 30)
@@ -118,7 +118,7 @@ struct BuyCuponView: View {
                 .frame(height: 600) // Altura fixa para manter o aspecto do card
                 .background(
                     LinearGradient(
-                        gradient: Gradient(colors: [Color.darkGreenGradient,Color.darkGreenGradient, Color.black]),
+                        gradient: Gradient(colors: [Color.greenGradient,Color.greenGradient, Color.black]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
