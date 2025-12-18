@@ -11,7 +11,6 @@ import SwiftData
 
 extension MapView {
     
-    // Instância do Service
     var userService: UserService {
         UserService(baseURL: "https://pegada-backend-production.up.railway.app/api")
     }
@@ -50,9 +49,16 @@ extension MapView {
     func handleManualCancellation() {
         let currentStatus = getCurrentProgress()
         
-        finalStats = (points: currentStatus.points, carbon: currentStatus.co2)
+        // MUDANÇA: Calcula tempo e distância parciais
+        let timeElapsed = Date().timeIntervalSince(startTime ?? Date())
+        let totalDistance = route?.distance ?? 0
+        let distanceTraveled = totalDistance * currentStatus.progress
         
-        // AQUI: Envia ao backend e depois chama o sincWithApi
+        finalStats = (
+            points: currentStatus.points,
+            carbon: currentStatus.co2
+        )
+        
         sendStatsToBackend(points: Int64(currentStatus.points), carbon: currentStatus.co2)
         
         isNavigating = false
@@ -108,9 +114,12 @@ extension MapView {
         let finalPoints = Int64(result.pointsEarned)
         let finalCarbon = result.carbonSavedGrams
         
-        finalStats = (points: Int(finalPoints), carbon: finalCarbon)
+        // MUDANÇA: Preenche o tuple completo
+        finalStats = (
+            points: Int(finalPoints),
+            carbon: finalCarbon
+        )
         
-        // AQUI: Envia ao backend e depois chama o sincWithApi
         sendStatsToBackend(points: finalPoints, carbon: finalCarbon)
         
         isNavigating = false
@@ -129,25 +138,20 @@ extension MapView {
             }
             
             // 1. ATUALIZAÇÃO IMEDIATA (Otimista)
-            // O usuário vê os pontos ganhos na hora, sem esperar a internet
             store.addLocalRewards(points: points, carbon: carbon)
             
             let userId = profileEntity.id
-            print("👤 Enviando pontos para o UserID: \(userId)")
             
             Task {
                 do {
-                    // 2. Envia para o servidor (Backup/Sincronização)
+                    // 2. Envia para o servidor
                     try await userService.sendUserStats(
                         userId: userId,
                         points: points,
                         safeCarbon: carbon
                     )
-                    print("✅ Backend notificado com sucesso.")
                     
-                    // 3. (Opcional) Sincroniza dados completos
-                    // Damos um pequeno delay para garantir que o backend processou a soma
-                    try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // 1 segundo
+                    try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
                     
                     userService.fetchUserProfile(userId: userId.uuidString.lowercased()) { result in
                         switch result {
@@ -156,14 +160,12 @@ extension MapView {
                                 store.sincWithApi(profile: userDTO)
                             }
                         case .failure(let error):
-                            print("⚠️ Falha leve na sincronização final (mas o local já está ok): \(error)")
+                            print("⚠️ Falha leve na sincronização: \(error)")
                         }
                     }
                     
                 } catch {
-                    print("❌ Erro de API (mas os pontos locais estão salvos): \(error)")
-                    // Como já salvamos localmente no passo 1, o usuário não "perde" visualmente os pontos
-                    // TODO: Implementar lógica de retry offline se necessário
+                    print("❌ Erro de API: \(error)")
                 }
             }
         }

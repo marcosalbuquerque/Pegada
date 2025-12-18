@@ -69,4 +69,5 @@ struct TripResult {
     let mode: TransportMode
     let carbonSavedGrams: Double
     let pointsEarned: Int
+    
 }
